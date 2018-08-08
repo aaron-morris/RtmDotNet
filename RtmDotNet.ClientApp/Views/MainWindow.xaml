@@ -1,0 +1,13 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RtmDotNet.ClientApp.ViewModels;assembly=RtmDotNet.ClientApp"
+        Icon="resm:RtmDotNet.ClientApp.Assets.avalonia-logo.ico"
+        Title="RtmDotNet.ClientApp">
+
+  <Design.DataContext>
+    <vm:MainWindowViewModel/>
+  </Design.DataContext>
+  
+  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+  
+</Window>
