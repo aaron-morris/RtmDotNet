@@ -22,9 +22,8 @@ using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
 using RtmDotNet.Auth;
-using RtmDotNet.Http;
 using RtmDotNet.Http.Api;
-using RtmDotNet.Http.Api.Models;
+using RtmDotNet.Http.Api.Auth;
 using RtmDotNet.Users;
 
 namespace RtmDotNet.UnitTests.Auth
@@ -41,7 +40,7 @@ namespace RtmDotNet.UnitTests.Auth
             const string fakeFrob = "My_Fake_Frob";
             var fakePermissionLevel = (PermissionLevel)int.MaxValue;
             
-            var fakeUrlFactory = Substitute.For<IUrlFactory>();
+            var fakeUrlFactory = Substitute.For<IAuthUrlFactory>();
             fakeUrlFactory.CreateGetFrobUrl().Returns(fakeFrobUrl);
             fakeUrlFactory.CreateAuthorizationUrl(fakePermissionLevel, fakeFrob).Returns(expectedAuthUrl);
 
@@ -65,19 +64,19 @@ namespace RtmDotNet.UnitTests.Auth
             const string fakeFrobUrl = "My_Fake_Frob_Url";
             const string fakeFrob = "My Fake Frob";
             const string fakeTokenUrl = "My_Fake_Token_Url";
-            var fakeAuthToken = new AuthorizationToken {Token = "My Fake Token"};
+            var fakeAuthTokenData = new GetTokenResponseData.AuthorizationTokenData { Token = "My Fake Token" };
             var fakePermissionLevel = (PermissionLevel)int.MaxValue;
 
-            var fakeUrlFactory = Substitute.For<IUrlFactory>();
+            var fakeUrlFactory = Substitute.For<IAuthUrlFactory>();
             fakeUrlFactory.CreateGetFrobUrl().Returns(fakeFrobUrl);
             fakeUrlFactory.CreateGetTokenUrl(fakeFrob).Returns(fakeTokenUrl);
 
             var fakeApiClient = Substitute.For<IRtmApiClient>();
             fakeApiClient.GetAsync<GetFrobResponseData>(fakeFrobUrl).Returns(Task.FromResult(new GetFrobResponseData { Frob = fakeFrob }));
-            fakeApiClient.GetAsync<GetTokenResponseData>(fakeTokenUrl).Returns(Task.FromResult(new GetTokenResponseData { AuthorizationToken = fakeAuthToken }));
+            fakeApiClient.GetAsync<GetTokenResponseData>(fakeTokenUrl).Returns(Task.FromResult(new GetTokenResponseData { AuthorizationToken = fakeAuthTokenData }));
 
             var fakeUserFactory = Substitute.For<IRtmUserFactory>();
-            fakeUserFactory.CreateNewUser(fakeAuthToken).ReturnsForAnyArgs(expectedUser);
+            fakeUserFactory.CreateNewUser(fakeAuthTokenData).ReturnsForAnyArgs(expectedUser);
 
             // Execute
             var authorizer = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeUserFactory);
@@ -97,9 +96,9 @@ namespace RtmDotNet.UnitTests.Auth
             const string fakeFrobUrl = "My_Fake_Frob_Url";
             const string fakeFrob = "My Fake Frob";
             const string fakeTokenUrl = "My_Fake_Token_Url";
-            var fakeAuthToken = new AuthorizationToken { Token = "My Fake Token" };
+            var fakeAuthToken = new GetTokenResponseData.AuthorizationTokenData { Token = "My Fake Token" };
             
-            var fakeUrlFactory = Substitute.For<IUrlFactory>();
+            var fakeUrlFactory = Substitute.For<IAuthUrlFactory>();
             fakeUrlFactory.CreateGetFrobUrl().Returns(fakeFrobUrl);
             fakeUrlFactory.CreateGetTokenUrl(fakeFrob).Returns(fakeTokenUrl);
 
@@ -115,12 +114,12 @@ namespace RtmDotNet.UnitTests.Auth
             Assert.ThrowsAsync<InvalidOperationException>(() => authorizer.GetAuthorizedUserAsync());
         }
 
-        private DesktopAuthorizer GetItemUnderTest(IUrlFactory urlFactory, IRtmApiClient apiClient)
+        private DesktopAuthorizer GetItemUnderTest(IAuthUrlFactory urlFactory, IRtmApiClient apiClient)
         {
             return GetItemUnderTest(urlFactory, apiClient, Substitute.For<IRtmUserFactory>());
         }
 
-        private DesktopAuthorizer GetItemUnderTest(IUrlFactory urlFactory, IRtmApiClient apiClient, IRtmUserFactory userFactory)
+        private DesktopAuthorizer GetItemUnderTest(IAuthUrlFactory urlFactory, IRtmApiClient apiClient, IRtmUserFactory userFactory)
         {
             return new DesktopAuthorizer(urlFactory, apiClient, userFactory);
         }

@@ -23,6 +23,6 @@ namespace RtmDotNet.Auth
 {
     public interface ITokenVerifier
     {
-        Task<bool> VerifyAsync(string token);
+        Task<bool> VerifyAsync(AuthorizationToken token);
     }
 }

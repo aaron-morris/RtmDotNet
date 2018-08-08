@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="IRtmUserFactory.cs" author="Aaron Morris">
+// <copyright file="GetListUrlBuilder.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -17,15 +17,16 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-using RtmDotNet.Auth;
-using RtmDotNet.Http.Api.Auth;
+using System;
 
-namespace RtmDotNet.Users
+namespace RtmDotNet.Http.Api.Lists
 {
-    public interface IRtmUserFactory
+    public class GetListUrlBuilder : AuthenticatedApiUrlBuilder
     {
-        IRtmUser CreateNewUser(GetTokenResponseData.AuthorizationTokenData authTokenData);
+        public GetListUrlBuilder(string apiKey, IApiSignatureGenerator signatureGenerator, string authToken) : base(apiKey, signatureGenerator, MethodName, authToken)
+        {
+        }
 
-        IRtmUser LoadFromJson(string json);
+        public static string MethodName => "rtm.lists.getList";
     }
 }

@@ -19,6 +19,7 @@
 
 using RtmDotNet.Http;
 using RtmDotNet.Http.Api;
+using RtmDotNet.Http.Api.Auth;
 using RtmDotNet.Users;
 
 namespace RtmDotNet.Auth
@@ -38,9 +39,9 @@ namespace RtmDotNet.Auth
         {
             var dataHasher = new Md5DataHasher();
             var signatureGenerator = new ApiSignatureGenerator(dataHasher, _sharedSecret);
-            var urlBuilderFactory = new UrlBuilderFactory(_apiKey, signatureGenerator);
+            var urlBuilderFactory = new AuthUrlBuilderFactory(_apiKey, signatureGenerator);
             var permissionLevelConverter = new PermissionLevelConverter();
-            var urlFactory = new UrlFactory(urlBuilderFactory, permissionLevelConverter);
+            var urlFactory = new AuthUrlFactory(urlBuilderFactory, permissionLevelConverter);
             var httpClient = new RtmHttpClient();
             var apiClient = new RtmApiClient(httpClient);
             var userFactory = new RtmUserFactory();
@@ -52,9 +53,9 @@ namespace RtmDotNet.Auth
         {
             var dataHasher = new Md5DataHasher();
             var signatureGenerator = new ApiSignatureGenerator(dataHasher, _sharedSecret);
-            var urlBuilderFactory = new UrlBuilderFactory(_apiKey, signatureGenerator);
+            var urlBuilderFactory = new AuthUrlBuilderFactory(_apiKey, signatureGenerator);
             var permissionLevelConverter = new PermissionLevelConverter();
-            var urlFactory = new UrlFactory(urlBuilderFactory, permissionLevelConverter);
+            var urlFactory = new AuthUrlFactory(urlBuilderFactory, permissionLevelConverter);
             var httpClient = new RtmHttpClient();
             var apiClient = new RtmApiClient(httpClient);
 

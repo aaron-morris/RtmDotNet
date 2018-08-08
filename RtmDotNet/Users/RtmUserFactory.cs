@@ -20,25 +20,31 @@
 using System;
 using Newtonsoft.Json;
 using RtmDotNet.Auth;
+using RtmDotNet.Http.Api.Auth;
 
 namespace RtmDotNet.Users
 {
     public class RtmUserFactory : IRtmUserFactory
     {
-        public IRtmUser CreateNewUser(AuthorizationToken authToken)
+        public IRtmUser CreateNewUser(GetTokenResponseData.AuthorizationTokenData authTokenData)
         {
-            if (authToken == null)
+            if (authTokenData == null)
             {
-                throw new ArgumentNullException(nameof(authToken));
+                throw new ArgumentNullException(nameof(authTokenData));
             }
+
+            var authToken = new AuthorizationToken
+            {
+                Id = authTokenData.Token,
+                Permissions = authTokenData.Permissions
+            };
 
             return new RtmUser
             {
-                UserId = authToken.User.UserId,
-                UserName = authToken.User.UserName,
-                FullName = authToken.User.FullName,
-                Token = authToken.Token,
-                Permissions = authToken.Permissions
+                UserId = authTokenData.User.UserId,
+                UserName = authTokenData.User.UserName,
+                FullName = authTokenData.User.FullName,
+                Token = authToken
             };
         }
 

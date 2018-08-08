@@ -34,11 +34,7 @@ namespace RtmDotNet.Users
         string FullName { get; set; }
 
         [JsonProperty("token")]
-        string Token { get; set; }
-
-        [JsonProperty("permissions")]
-        [JsonConverter(typeof(PermissionsJsonConverter))]
-        PermissionLevel Permissions { get; set; }
+        AuthorizationToken Token { get; set; }
 
         string ToJson();
     }

@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="AuthorizationToken.cs" author="Aaron Morris">
+// <copyright file="RtmList.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -18,16 +18,40 @@
 // -----------------------------------------------------------------------
 
 using Newtonsoft.Json;
+using RtmDotNet.Http.Api;
 
-namespace RtmDotNet.Auth
+namespace RtmDotNet.Lists
 {
-    public class AuthorizationToken
+    public class RtmList
     {
         [JsonProperty("id")]
         public string Id { get; set; }
 
-        [JsonProperty("permissions")]
-        [JsonConverter(typeof(PermissionsJsonConverter))]
-        public PermissionLevel Permissions { get; set; }
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("locked")]
+        [JsonConverter(typeof(RtmBooleanJsonConverter))]
+        public bool IsLocked { get; set; }
+
+        [JsonProperty("archived")]
+        [JsonConverter(typeof(RtmBooleanJsonConverter))]
+        public bool IsArchived { get; set; }
+
+        [JsonProperty("smart")]
+        [JsonConverter(typeof(RtmBooleanJsonConverter))]
+        public bool IsSmart { get; set; }
+
+        [JsonProperty("position")]
+        public int Position { get; set; }
+
+        [JsonProperty("sort_order")]
+        public int SortOrder { get; set; }
+
+        [JsonProperty("permission")]
+        public string Permission { get; set; }
+
+        [JsonProperty("filter")]
+        public string Filter { get; set; }
     }
 }

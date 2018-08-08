@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="UrlFactoryTests.cs" author="Aaron Morris">
+// <copyright file="AuthUrlFactoryTests.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -21,11 +21,12 @@ using NSubstitute;
 using NUnit.Framework;
 using RtmDotNet.Auth;
 using RtmDotNet.Http;
+using RtmDotNet.Http.Api.Auth;
 
-namespace RtmDotNet.UnitTests.Http
+namespace RtmDotNet.UnitTests.Http.Api.Auth
 {
     [TestFixture]
-    public class UrlFactoryTests
+    public class AuthUrlFactoryTests
     {
         [Test]
         public void CreateCheckTokenUrl_ReturnsCheckTokenUrl()
@@ -37,7 +38,7 @@ namespace RtmDotNet.UnitTests.Http
             var fakeUrlBuilder = Substitute.For<IUrlBuilder>();
             fakeUrlBuilder.BuildUrl().Returns(expectedUrl);
 
-            var fakeUrlBuilderFactory = Substitute.For<IUrlBuilderFactory>();
+            var fakeUrlBuilderFactory = Substitute.For<IAuthUrlBuilderFactory>();
             fakeUrlBuilderFactory.CreateCheckTokenUrlBuilder(fakeToken).Returns(fakeUrlBuilder);
 
             // Execute
@@ -57,7 +58,7 @@ namespace RtmDotNet.UnitTests.Http
             var fakeUrlBuilder = Substitute.For<IUrlBuilder>();
             fakeUrlBuilder.BuildUrl().Returns(expectedUrl);
 
-            var fakeUrlBuilderFactory = Substitute.For<IUrlBuilderFactory>();
+            var fakeUrlBuilderFactory = Substitute.For<IAuthUrlBuilderFactory>();
             fakeUrlBuilderFactory.CreateGetFrobUrlBuilder().Returns(fakeUrlBuilder);
 
             // Execute
@@ -78,7 +79,7 @@ namespace RtmDotNet.UnitTests.Http
             var fakeUrlBuilder = Substitute.For<IUrlBuilder>();
             fakeUrlBuilder.BuildUrl().Returns(expectedUrl);
 
-            var fakeUrlBuilderFactory = Substitute.For<IUrlBuilderFactory>();
+            var fakeUrlBuilderFactory = Substitute.For<IAuthUrlBuilderFactory>();
             fakeUrlBuilderFactory.CreateGetTokenUrlBuilder(fakeFrob).Returns(fakeUrlBuilder);
 
             // Execute
@@ -103,7 +104,7 @@ namespace RtmDotNet.UnitTests.Http
             var fakeUrlBuilder = Substitute.For<IUrlBuilder>();
             fakeUrlBuilder.BuildUrl().Returns(expectedUrl);
 
-            var fakeUrlBuilderFactory = Substitute.For<IUrlBuilderFactory>();
+            var fakeUrlBuilderFactory = Substitute.For<IAuthUrlBuilderFactory>();
             fakeUrlBuilderFactory.CreateAuthUrlBuilder(fakePermLevelName).Returns(fakeUrlBuilder);
 
             // Execute
@@ -129,7 +130,7 @@ namespace RtmDotNet.UnitTests.Http
             var fakeUrlBuilder = Substitute.For<IUrlBuilder>();
             fakeUrlBuilder.BuildUrl().Returns(expectedUrl);
 
-            var fakeUrlBuilderFactory = Substitute.For<IUrlBuilderFactory>();
+            var fakeUrlBuilderFactory = Substitute.For<IAuthUrlBuilderFactory>();
             fakeUrlBuilderFactory.CreateAuthUrlBuilder(fakePermLevelName, fakeFrob).Returns(fakeUrlBuilder);
 
             // Execute
@@ -140,9 +141,9 @@ namespace RtmDotNet.UnitTests.Http
             Assert.AreEqual(expectedUrl, actual);
         }
 
-        private UrlFactory GetItemUnderTest(IUrlBuilderFactory urlBuilderFactory, IPermissionLevelConverter permissionLevelConverter)
+        private AuthUrlFactory GetItemUnderTest(IAuthUrlBuilderFactory urlBuilderFactory, IPermissionLevelConverter permissionLevelConverter)
         {
-            return new UrlFactory(urlBuilderFactory, permissionLevelConverter);
+            return new AuthUrlFactory(urlBuilderFactory, permissionLevelConverter);
         }
     }
 }

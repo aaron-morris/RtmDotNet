@@ -17,47 +17,18 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-using RtmDotNet.Http.Api;
-using RtmDotNet.Http.Api.Auth;
-using RtmDotNet.Http.Auth;
-
 namespace RtmDotNet.Http
 {
-    public class UrlBuilderFactory : IUrlBuilderFactory
+    public abstract class UrlBuilderFactory
     {
-        private readonly string _apiKey;
+        protected string ApiKey { get; }
 
-        private readonly IApiSignatureGenerator _signatureGenerator;
+        protected IApiSignatureGenerator SignatureGenerator { get; }
 
-        public UrlBuilderFactory(string apiKey, IApiSignatureGenerator signatureGenerator)
+        protected UrlBuilderFactory(string apiKey, IApiSignatureGenerator signatureGenerator)
         {
-            _apiKey = apiKey;
-            _signatureGenerator = signatureGenerator;
-        }
-
-        public IUrlBuilder CreateCheckTokenUrlBuilder(string authToken)
-        {
-            return new CheckTokenUrlBuilder(_apiKey, _signatureGenerator, authToken);
-        }
-
-        public IUrlBuilder CreateGetFrobUrlBuilder()
-        {
-            return new GetFrobUrlBuilder(_apiKey, _signatureGenerator);
-        }
-
-        public IUrlBuilder CreateGetTokenUrlBuilder(string frob)
-        {
-            return new GetTokenUrlBuilder(_apiKey, _signatureGenerator, frob);
-        }
-
-        public IUrlBuilder CreateAuthUrlBuilder(string permissionLevel)
-        {
-            return new AuthUrlBuilder(_apiKey, _signatureGenerator, permissionLevel);
-        }
-
-        public IUrlBuilder CreateAuthUrlBuilder(string permissionLevel, string frob)
-        {
-            return new AuthUrlBuilder(_apiKey, _signatureGenerator, permissionLevel, frob);
+            ApiKey = apiKey;
+            SignatureGenerator = signatureGenerator;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="IUrlFactory.cs" author="Aaron Morris">
+// <copyright file="ListsUrlFactory.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -17,20 +17,20 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-using RtmDotNet.Auth;
-
-namespace RtmDotNet.Http
+namespace RtmDotNet.Http.Api.Lists
 {
-    public interface IUrlFactory
+    public class ListsUrlFactory : IListsUrlFactory
     {
-        string CreateCheckTokenUrl(string authToken);
+        private readonly IListsUrlBuilderFactory _urlBuilderFactory;
 
-        string CreateGetFrobUrl();
+        public ListsUrlFactory(IListsUrlBuilderFactory urlBuilderFactory)
+        {
+            _urlBuilderFactory = urlBuilderFactory;
+        }
 
-        string CreateGetTokenUrl(string frob);
-
-        string CreateAuthorizationUrl(PermissionLevel permissionLevel);
-
-        string CreateAuthorizationUrl(PermissionLevel permissionLevel, string frob);
+        public string CreateGetListsUrl(string authToken)
+        {
+            return _urlBuilderFactory.CreateGetListsUrlBuilder(authToken).BuildUrl();
+        }
     }
 }

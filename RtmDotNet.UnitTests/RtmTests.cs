@@ -20,6 +20,7 @@
 using System;
 using NUnit.Framework;
 using RtmDotNet.Auth;
+using RtmDotNet.Lists;
 using RtmDotNet.Users;
 
 namespace RtmDotNet.UnitTests
@@ -55,24 +56,45 @@ namespace RtmDotNet.UnitTests
         }
 
         [Test]
-        public void UserFactory_CreatesUserFactory()
+        public void GetUserFactory_CreatesUserFactory()
         {
-            var actual = Rtm.UserFactory;
+            var actual = Rtm.GetUserFactory();
             Assert.IsInstanceOf<IRtmUserFactory>(actual);
         }
 
         [Test]
-        public void AuthFactory_ApiIsInitialized_CreatesAuthFactory()
+        public void GetAuthFactory_ApiIsInitialized_CreatesAuthFactory()
         {
             Rtm.Init("test", "test");
-            var actual = Rtm.AuthFactory;
+            var actual = Rtm.GetAuthFactory();
             Assert.IsInstanceOf<IAuthFactory>(actual);
         }
 
         [Test]
-        public void AuthFactory_ApiNotInitialized_ThrowsInvalidOperationException()
+        public void GetAuthFactory_ApiNotInitialized_ThrowsInvalidOperationException()
         {
-            Assert.That(() => Rtm.AuthFactory, Throws.InvalidOperationException);
+            Assert.Throws<InvalidOperationException>(() => Rtm.GetAuthFactory());
+        }
+
+        [Test]
+        public void GetListRepository_ApiIsInitialized_CreatesListRepository()
+        {
+            Rtm.Init("test", "test");
+            var actual = Rtm.GetListRepository(new AuthorizationToken());
+            Assert.IsInstanceOf<IListRepository>(actual);
+        }
+
+        [Test]
+        public void GetListRepository_NullToken_ThrowsArgumentNullException()
+        {
+            Rtm.Init("test", "test");
+            Assert.Throws<ArgumentNullException>(() => Rtm.GetListRepository(null));
+        }
+
+        [Test]
+        public void GetListRepostiory_ApiNotInitialized_ThrowsInvalidOperationException()
+        {
+            Assert.Throws<InvalidOperationException>(() => Rtm.GetListRepository(new AuthorizationToken()));
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="IRtmUserFactory.cs" author="Aaron Morris">
+// <copyright file="ListsUrlBuilderFactoryTests.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -17,15 +17,29 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-using RtmDotNet.Auth;
-using RtmDotNet.Http.Api.Auth;
+using NUnit.Framework;
+using RtmDotNet.Http;
+using RtmDotNet.Http.Api.Lists;
 
-namespace RtmDotNet.Users
+namespace RtmDotNet.UnitTests.Http.Api.Lists
 {
-    public interface IRtmUserFactory
+    [TestFixture]
+    public class ListsUrlBuilderFactoryTests
     {
-        IRtmUser CreateNewUser(GetTokenResponseData.AuthorizationTokenData authTokenData);
+        [Test]
+        public void CreateGetListsUrlBuilder_ReturnsGetListsUrlBuilder()
+        {
+            // Execute
+            var factory = GetItemUnderTest();
+            var actual = factory.CreateGetListsUrlBuilder(string.Empty);
 
-        IRtmUser LoadFromJson(string json);
+            // Verify
+            Assert.IsInstanceOf<IUrlBuilder>(actual);
+        }
+
+        private ListsUrlBuilderFactory GetItemUnderTest()
+        {
+            return new ListsUrlBuilderFactory(null, null);
+        }
     }
 }

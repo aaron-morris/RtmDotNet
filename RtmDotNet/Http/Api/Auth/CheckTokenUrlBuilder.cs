@@ -19,11 +19,10 @@
 
 namespace RtmDotNet.Http.Api.Auth
 {
-    public class CheckTokenUrlBuilder : ApiUrlBuilder
+    public class CheckTokenUrlBuilder : AuthenticatedApiUrlBuilder
     {
-        public CheckTokenUrlBuilder(string apiKey, IApiSignatureGenerator signatureGenerator, string authToken) : base(apiKey, signatureGenerator, MethodName)
+        public CheckTokenUrlBuilder(string apiKey, IApiSignatureGenerator signatureGenerator, string authToken) : base(apiKey, signatureGenerator, MethodName, authToken)
         {
-            Parameters.Add("auth_token", authToken);
         }
 
         public static string MethodName => "rtm.auth.checkToken";

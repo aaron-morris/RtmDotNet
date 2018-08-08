@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="UrlBuilderFactoryTests.cs" author="Aaron Morris">
+// <copyright file="AuthUrlBuilderFactoryTests.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -18,14 +18,13 @@
 // -----------------------------------------------------------------------
 
 using NUnit.Framework;
-using RtmDotNet.Http;
 using RtmDotNet.Http.Api.Auth;
 using RtmDotNet.Http.Auth;
 
-namespace RtmDotNet.UnitTests.Http
+namespace RtmDotNet.UnitTests.Http.Api.Auth
 {
     [TestFixture]
-    public class UrlBuilderFactoryTests
+    public class AuthUrlBuilderFactoryTests
     {
         [Test]
         public void CreateCheckTokenUrlBuilder_ReturnsInitializedGetFrobUrlBuilder()
@@ -93,9 +92,9 @@ namespace RtmDotNet.UnitTests.Http
             Assert.AreEqual(expectedFrob, actual.Parameters["frob"]);
         }
 
-        private UrlBuilderFactory GetItemUnderTest()
+        private AuthUrlBuilderFactory GetItemUnderTest()
         {
-            return new UrlBuilderFactory(null, null);
+            return new AuthUrlBuilderFactory(null, null);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="IRtmUserFactory.cs" author="Aaron Morris">
+// <copyright file="GetFrobResponseData.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -17,15 +17,13 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-using RtmDotNet.Auth;
-using RtmDotNet.Http.Api.Auth;
+using Newtonsoft.Json;
 
-namespace RtmDotNet.Users
+namespace RtmDotNet.Http.Api.Auth
 {
-    public interface IRtmUserFactory
+    public class GetFrobResponseData : RtmApiResponseData
     {
-        IRtmUser CreateNewUser(GetTokenResponseData.AuthorizationTokenData authTokenData);
-
-        IRtmUser LoadFromJson(string json);
+        [JsonProperty("frob")]
+        public string Frob { get; set; }
     }
 }

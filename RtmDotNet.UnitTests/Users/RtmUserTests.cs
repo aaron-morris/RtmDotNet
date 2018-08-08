@@ -38,8 +38,10 @@ $@"{{
   ""user_id"": ""{ExpectedUserId}"",
   ""user_name"": ""{ExpectedUserName}"",
   ""full_name"": ""{ExpectedFullName}"",
-  ""token"": ""{ExpectedToken}"",
-  ""permissions"": ""{ExpectedPermissionName}""
+  ""token"": {{
+    ""id"": ""{ExpectedToken}"",
+    ""permissions"": ""{ExpectedPermissionName}""
+  }}
 }}";
 
         [Test]
@@ -55,10 +57,13 @@ $@"{{
             return new RtmUser
             {
                 FullName = ExpectedFullName,
-                Permissions = ExpectedPermissionLevel,
-                Token = ExpectedToken,
                 UserId = ExpectedUserId,
-                UserName = ExpectedUserName
+                UserName = ExpectedUserName,
+                Token = new AuthorizationToken
+                {
+                    Id = ExpectedToken,
+                    Permissions = ExpectedPermissionLevel
+                }
             };
         }
     }

@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="IRtmUserFactory.cs" author="Aaron Morris">
+// <copyright file="IAuthUrlBuilderFactory.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -17,15 +17,18 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-using RtmDotNet.Auth;
-using RtmDotNet.Http.Api.Auth;
-
-namespace RtmDotNet.Users
+namespace RtmDotNet.Http.Api.Auth
 {
-    public interface IRtmUserFactory
+    public interface IAuthUrlBuilderFactory
     {
-        IRtmUser CreateNewUser(GetTokenResponseData.AuthorizationTokenData authTokenData);
+        IUrlBuilder CreateCheckTokenUrlBuilder(string authToken);
 
-        IRtmUser LoadFromJson(string json);
+        IUrlBuilder CreateGetFrobUrlBuilder();
+
+        IUrlBuilder CreateGetTokenUrlBuilder(string frob);
+
+        IUrlBuilder CreateAuthUrlBuilder(string permissionLevel);
+
+        IUrlBuilder CreateAuthUrlBuilder(string permissionLevel, string frob);
     }
 }

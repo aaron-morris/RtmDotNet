@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="IUrlBuilderFactory.cs" author="Aaron Morris">
+// <copyright file="GetListResponseData.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -17,18 +17,21 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace RtmDotNet.Http
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using RtmDotNet.Lists;
+
+namespace RtmDotNet.Http.Api.Lists
 {
-    public interface IUrlBuilderFactory
+    public class GetListResponseData : RtmApiResponseData
     {
-        IUrlBuilder CreateCheckTokenUrlBuilder(string authToken);
+        [JsonProperty("lists")]
+        public ListOfLists Lists { get; set; }
 
-        IUrlBuilder CreateGetFrobUrlBuilder();
-
-        IUrlBuilder CreateGetTokenUrlBuilder(string frob);
-
-        IUrlBuilder CreateAuthUrlBuilder(string permissionLevel);
-
-        IUrlBuilder CreateAuthUrlBuilder(string permissionLevel, string frob);
+        public class ListOfLists
+        {
+            [JsonProperty("list")]
+            public IList<RtmList> Lists { get; set; }
+        }
     }
 }

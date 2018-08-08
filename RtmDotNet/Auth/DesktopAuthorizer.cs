@@ -19,22 +19,21 @@
 
 using System;
 using System.Threading.Tasks;
-using RtmDotNet.Http;
 using RtmDotNet.Http.Api;
-using RtmDotNet.Http.Api.Models;
+using RtmDotNet.Http.Api.Auth;
 using RtmDotNet.Users;
 
 namespace RtmDotNet.Auth
 {
     public class DesktopAuthorizer : IDesktopAuthorizer
     {
-        private readonly IUrlFactory _urlFactory;
+        private readonly IAuthUrlFactory _urlFactory;
         private readonly IRtmApiClient _apiClient;
         private readonly IRtmUserFactory _userFactory;
 
         private string _frob;
 
-        public DesktopAuthorizer(IUrlFactory urlFactory, IRtmApiClient apiClient, IRtmUserFactory userFactory)
+        public DesktopAuthorizer(IAuthUrlFactory urlFactory, IRtmApiClient apiClient, IRtmUserFactory userFactory)
         {
             _urlFactory = urlFactory;
             _apiClient = apiClient;

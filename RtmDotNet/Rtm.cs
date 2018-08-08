@@ -19,6 +19,10 @@
 
 using System;
 using RtmDotNet.Auth;
+using RtmDotNet.Http;
+using RtmDotNet.Http.Api;
+using RtmDotNet.Http.Api.Lists;
+using RtmDotNet.Lists;
 using RtmDotNet.Users;
 
 namespace RtmDotNet
@@ -45,16 +49,35 @@ namespace RtmDotNet
             SharedSecret = sharedSecret;
         }
 
-        public static IAuthFactory AuthFactory
+        public static IAuthFactory GetAuthFactory()
         {
-            get
-            {
-                EnforceInitialization();
-                return new AuthFactory(ApiKey, SharedSecret);
-            }
+            EnforceInitialization();
+            return new AuthFactory(ApiKey, SharedSecret);
         }
 
-        public static IRtmUserFactory UserFactory => new RtmUserFactory();
+        public static IListRepository GetListRepository(AuthorizationToken authToken)
+        {
+            if (authToken == null)
+            {
+                throw new ArgumentNullException(nameof(authToken));
+            }
+
+            EnforceInitialization();
+
+            var dataHasher = new Md5DataHasher();
+            var signatureGenerator = new ApiSignatureGenerator(dataHasher, SharedSecret);
+            var urlBuilderFactory = new ListsUrlBuilderFactory(ApiKey, signatureGenerator);
+            var urlFactory = new ListsUrlFactory(urlBuilderFactory);
+            var httpClient = new RtmHttpClient();
+            var apiClient = new RtmApiClient(httpClient);
+
+            return new ListRepository(urlFactory, apiClient, authToken);
+        }
+
+        public static IRtmUserFactory GetUserFactory()
+        {
+            return new RtmUserFactory();
+        }
 
         private static void EnforceInitialization()
         {

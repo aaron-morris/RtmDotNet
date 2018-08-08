@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="GetFrobResponseData.cs" author="Aaron Morris">
+// <copyright file="IListsUrlFactory.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -17,14 +17,12 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-using Newtonsoft.Json;
-using RtmDotNet.Http.Api;
+using System;
 
-namespace RtmDotNet.Http.Api.Models
+namespace RtmDotNet.Http.Api.Lists
 {
-    public class GetFrobResponseData : RtmApiResponseData
+    public interface IListsUrlFactory
     {
-        [JsonProperty("frob")]
-        public string Frob { get; set; }
+        string CreateGetListsUrl(string authToken);
     }
 }

@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="RtmUser.cs" author="Aaron Morris">
+// <copyright file="GetListUrlBuilderTests.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -17,24 +17,33 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-using Newtonsoft.Json;
-using RtmDotNet.Auth;
+using System.Collections.Generic;
+using NUnit.Framework;
+using RtmDotNet.Http;
+using RtmDotNet.Http.Api.Lists;
 
-namespace RtmDotNet.Users
+namespace RtmDotNet.UnitTests.Http.Api.Lists
 {
-    public class RtmUser : IRtmUser
+    [TestFixture]
+    public class GetListUrlBuilderTests : ApiUrlBuilderTests
     {
-        public string UserId { get; set; }
+        private const string FakeToken = "My Fake Auth Token";
 
-        public string UserName { get; set; }
-
-        public string FullName { get; set; }
-        
-        public AuthorizationToken Token { get; set; }
-
-        public string ToJson()
+        protected override IUrlBuilder GetItemUnderTest(IApiSignatureGenerator signatureGenerator)
         {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
+            return new GetListUrlBuilder(FakeApiKey, signatureGenerator, FakeToken);
+        }
+
+        protected override string MethodName => GetListUrlBuilder.MethodName;
+
+        protected override IDictionary<string, string> ExpectedParams
+        {
+            get
+            {
+                var expectedParams = base.ExpectedParams;
+                expectedParams.Add("auth_token", FakeToken);
+                return expectedParams;
+            }
         }
     }
 }

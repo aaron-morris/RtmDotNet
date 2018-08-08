@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="UrlFactory.cs" author="Aaron Morris">
+// <copyright file="AuthUrlFactory.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -18,17 +18,16 @@
 // -----------------------------------------------------------------------
 
 using RtmDotNet.Auth;
-using RtmDotNet.Http.Auth;
 
-namespace RtmDotNet.Http
+namespace RtmDotNet.Http.Api.Auth
 {
-    public class UrlFactory : IUrlFactory
+    public class AuthUrlFactory : IAuthUrlFactory
     {
-        private readonly IUrlBuilderFactory _urlBuilderFactory;
+        private readonly IAuthUrlBuilderFactory _urlBuilderFactory;
 
         private readonly IPermissionLevelConverter _permissionLevelConverter;
 
-        public UrlFactory(IUrlBuilderFactory urlBuilderFactory, IPermissionLevelConverter permissionLevelConverter)
+        public AuthUrlFactory(IAuthUrlBuilderFactory urlBuilderFactory, IPermissionLevelConverter permissionLevelConverter)
         {
             _urlBuilderFactory = urlBuilderFactory;
             _permissionLevelConverter = permissionLevelConverter;

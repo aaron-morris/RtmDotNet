@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="TokenVerifier.cs" author="Aaron Morris">
+// <copyright file="ListRepository.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -17,44 +17,40 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using RtmDotNet.Auth;
 using RtmDotNet.Http.Api;
-using RtmDotNet.Http.Api.Auth;
+using RtmDotNet.Http.Api.Lists;
 
-namespace RtmDotNet.Auth
+namespace RtmDotNet.Lists
 {
-    public class TokenVerifier : ITokenVerifier
+    public class ListRepository : IListRepository
     {
-        private readonly IAuthUrlFactory _urlFactory;
+        private readonly IListsUrlFactory _urlFactory;
+
         private readonly IRtmApiClient _apiClient;
 
-        public TokenVerifier(IAuthUrlFactory urlFactory, IRtmApiClient apiClient)
+        private readonly AuthorizationToken _authToken;
+
+        public ListRepository(IListsUrlFactory urlFactory, IRtmApiClient apiClient, AuthorizationToken authToken)
         {
             _urlFactory = urlFactory;
             _apiClient = apiClient;
+            _authToken = authToken;
         }
 
-        public async Task<bool> VerifyAsync(AuthorizationToken token)
+        public async Task<IList<RtmList>> GetAllListsAsync()
         {
-            try
+            if (_authToken.Permissions < PermissionLevel.Read)
             {
-                var checkTokenUrl = _urlFactory.CreateCheckTokenUrl(token.Id);
-                await _apiClient.GetAsync<GetTokenResponseData>(checkTokenUrl);
-
-                return true;
+                throw new InvalidOperationException("This operation requires READ permissions of the RTM API.");
             }
-            catch (RtmException ex)
-            {
-                if (ex.ErrorCode.Equals(RtmErrorCodes.InvalidAuthToken))
-                {
-                    // Authentication verification failed.
-                    return false;
-                }
 
-                // Another error
-                throw;
-            }
-            
+            var url = _urlFactory.CreateGetListsUrl(_authToken.Id);
+            var response = await _apiClient.GetAsync<GetListResponseData>(url);
+            return response.Lists.Lists;
         }
     }
 }

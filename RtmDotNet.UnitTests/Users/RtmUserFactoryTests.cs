@@ -20,6 +20,7 @@
 using System;
 using NUnit.Framework;
 using RtmDotNet.Auth;
+using RtmDotNet.Http.Api.Auth;
 using RtmDotNet.Users;
 
 namespace RtmDotNet.UnitTests.Users
@@ -35,12 +36,12 @@ namespace RtmDotNet.UnitTests.Users
         private const string ExpectedToken = "My Fake Token";
 
         [Test]
-        public void CreateNewUser_ValidAuthToken_InitsUserFromAuthToken()
+        public void CreateNewUser_ValidAuthToken_InitsUserFromAuthTokenData()
         {
             // Setup
-            var fakeAuthToken = new AuthorizationToken
+            var fakeAuthToken = new GetTokenResponseData.AuthorizationTokenData
             {
-                User = new AuthorizationToken.UserInfo
+                User = new GetTokenResponseData.AuthorizationTokenData.UserInfo
                 {
                     FullName = ExpectedFullName,
                     UserId = ExpectedUserId,
@@ -58,8 +59,8 @@ namespace RtmDotNet.UnitTests.Users
             Assert.AreEqual(ExpectedFullName, actual.FullName);
             Assert.AreEqual(ExpectedUserName, actual.UserName);
             Assert.AreEqual(ExpectedUserId, actual.UserId);
-            Assert.AreEqual(ExpectedPermissionLevel, actual.Permissions);
-            Assert.AreEqual(ExpectedToken, actual.Token);
+            Assert.AreEqual(ExpectedPermissionLevel, actual.Token.Permissions);
+            Assert.AreEqual(ExpectedToken, actual.Token.Id);
         }
 
         [Test]
@@ -78,8 +79,10 @@ $@"{{
     ""user_id"": ""{ExpectedUserId}"",
     ""user_name"": ""{ExpectedUserName}"",
     ""full_name"": ""{ExpectedFullName}"",
-    ""token"": ""{ExpectedToken}"",
-    ""permissions"": ""{ExpectedPermissionName}""
+    ""token"": {{
+        ""id"": ""{ExpectedToken}"",
+        ""permissions"": ""{ExpectedPermissionName}""
+    }}
 }}";
 
             // Execute
@@ -90,8 +93,8 @@ $@"{{
             Assert.AreEqual(ExpectedFullName, actual.FullName);
             Assert.AreEqual(ExpectedUserName, actual.UserName);
             Assert.AreEqual(ExpectedUserId, actual.UserId);
-            Assert.AreEqual(ExpectedPermissionLevel, actual.Permissions);
-            Assert.AreEqual(ExpectedToken, actual.Token);
+            Assert.AreEqual(ExpectedPermissionLevel, actual.Token.Permissions);
+            Assert.AreEqual(ExpectedToken, actual.Token.Id);
         }
 
         [TestCase(null)]

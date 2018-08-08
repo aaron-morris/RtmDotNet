@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="GetTokenResponseData.cs" author="Aaron Morris">
+// <copyright file="IAuthUrlFactory.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -17,14 +17,20 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-using Newtonsoft.Json;
 using RtmDotNet.Auth;
 
-namespace RtmDotNet.Http.Api.Models
+namespace RtmDotNet.Http.Api.Auth
 {
-    public class GetTokenResponseData : RtmApiResponseData
+    public interface IAuthUrlFactory
     {
-        [JsonProperty("auth")]
-        public AuthorizationToken AuthorizationToken { get; set; }
+        string CreateCheckTokenUrl(string authToken);
+
+        string CreateGetFrobUrl();
+
+        string CreateGetTokenUrl(string frob);
+
+        string CreateAuthorizationUrl(PermissionLevel permissionLevel);
+
+        string CreateAuthorizationUrl(PermissionLevel permissionLevel, string frob);
     }
 }
