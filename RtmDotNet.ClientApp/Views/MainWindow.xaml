@@ -8,6 +8,12 @@
     <vm:MainWindowViewModel/>
   </Design.DataContext>
   
-  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+  <TreeView Items="{Binding Children}" Width="250" Height="350">
+        <TreeView.ItemTemplate>
+          <TreeDataTemplate ItemsSource="{Binding Children}">
+            <TextBlock Text="{Binding Name}"/>
+          </TreeDataTemplate>
+        </TreeView.ItemTemplate>
+      </TreeView>
   
 </Window>
