@@ -55,7 +55,7 @@ namespace RtmDotNet
             return new AuthFactory(ApiKey, SharedSecret);
         }
 
-        public static IListRepository GetListRepository(AuthorizationToken authToken)
+        public static IListRepository GetListRepository(AuthenticationToken authToken)
         {
             if (authToken == null)
             {

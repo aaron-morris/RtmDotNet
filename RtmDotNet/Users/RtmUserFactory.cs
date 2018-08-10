@@ -26,14 +26,14 @@ namespace RtmDotNet.Users
 {
     public class RtmUserFactory : IRtmUserFactory
     {
-        public IRtmUser CreateNewUser(GetTokenResponseData.AuthorizationTokenData authTokenData)
+        public IRtmUser CreateNewUser(GetTokenResponseData.AuthenticationTokenData authTokenData)
         {
             if (authTokenData == null)
             {
                 throw new ArgumentNullException(nameof(authTokenData));
             }
 
-            var authToken = new AuthorizationToken
+            var authToken = new AuthenticationToken
             {
                 Id = authTokenData.Token,
                 Permissions = authTokenData.Permissions

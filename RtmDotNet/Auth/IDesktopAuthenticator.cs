@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="IDesktopAuthorizer.cs" author="Aaron Morris">
+// <copyright file="IDesktopAuthenticator.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -22,9 +22,9 @@ using RtmDotNet.Users;
 
 namespace RtmDotNet.Auth
 {
-    public interface IDesktopAuthorizer
+    public interface IDesktopAuthenticator
     {
-        Task<string> GetAuthorizationUrlAsync(PermissionLevel permissionLevel);
-        Task<IRtmUser> GetAuthorizedUserAsync();
+        Task<string> GetAuthenticationUrlAsync(PermissionLevel permissionLevel);
+        Task<IRtmUser> GetAutheticatedUserAsync();
     }
 }

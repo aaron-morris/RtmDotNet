@@ -30,7 +30,7 @@ namespace RtmDotNet.Users
 
         public string FullName { get; set; }
         
-        public AuthorizationToken Token { get; set; }
+        public AuthenticationToken Token { get; set; }
 
         public string ToJson()
         {

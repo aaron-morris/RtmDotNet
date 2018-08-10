@@ -35,7 +35,7 @@ namespace RtmDotNet.Auth
             _sharedSecret = sharedSecret;
         }
 
-        public IDesktopAuthorizer CreateDesktopAuthorizer()
+        public IDesktopAuthenticator CreateDesktopAuthenticator()
         {
             var dataHasher = new Md5DataHasher();
             var signatureGenerator = new ApiSignatureGenerator(dataHasher, _sharedSecret);
@@ -46,7 +46,7 @@ namespace RtmDotNet.Auth
             var apiClient = new RtmApiClient(httpClient);
             var userFactory = new RtmUserFactory();
 
-            return new DesktopAuthorizer(urlFactory, apiClient, userFactory);
+            return new DesktopAuthenticator(urlFactory, apiClient, userFactory);
         }
 
         public ITokenVerifier CreateTokenVerifier()

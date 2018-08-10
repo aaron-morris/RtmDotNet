@@ -40,7 +40,7 @@ namespace RtmDotNet.UnitTests.Lists
             // Setup
             var expectedLists = new List<RtmList> {new RtmList{ Name = "My Fake List"}};
 
-            var fakeAuthToken = new AuthorizationToken{ Id = "My Fake Token ID", Permissions = permissionLevel};
+            var fakeAuthToken = new AuthenticationToken{ Id = "My Fake Token ID", Permissions = permissionLevel};
             const string fakeListsUrl = "My Fake URL";
 
             var fakeUrlFactory = Substitute.For<IListsUrlFactory>();
@@ -61,19 +61,19 @@ namespace RtmDotNet.UnitTests.Lists
         public void GetAllListsAsync_InsufficientPermissions_ThrowsInvalidOperationError()
         {
             // Setup
-            var fakeAuthToken = new AuthorizationToken { Id = "My Fake Token ID", Permissions = PermissionLevel.Undefined };
+            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = PermissionLevel.Undefined };
 
             // Execute
             var listRepository = GetItemUnderTest(fakeAuthToken);
             Assert.ThrowsAsync<InvalidOperationException>(() => listRepository.GetAllListsAsync());
         }
 
-        private ListRepository GetItemUnderTest(AuthorizationToken authToken)
+        private ListRepository GetItemUnderTest(AuthenticationToken authToken)
         {
             return GetItemUnderTest(Substitute.For<IListsUrlFactory>(), Substitute.For<IRtmApiClient>(), authToken);
         }
 
-        private ListRepository GetItemUnderTest(IListsUrlFactory urlFactory, IRtmApiClient apiClient, AuthorizationToken authToken)
+        private ListRepository GetItemUnderTest(IListsUrlFactory urlFactory, IRtmApiClient apiClient, AuthenticationToken authToken)
         {
             return new ListRepository(urlFactory, apiClient, authToken);
         }

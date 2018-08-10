@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="AuthorizationToken.cs" author="Aaron Morris">
+// <copyright file="AuthenticationToken.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ using Newtonsoft.Json;
 
 namespace RtmDotNet.Auth
 {
-    public class AuthorizationToken
+    public class AuthenticationToken
     {
         [JsonProperty("id")]
         public string Id { get; set; }

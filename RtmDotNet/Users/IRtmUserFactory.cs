@@ -24,7 +24,7 @@ namespace RtmDotNet.Users
 {
     public interface IRtmUserFactory
     {
-        IRtmUser CreateNewUser(GetTokenResponseData.AuthorizationTokenData authTokenData);
+        IRtmUser CreateNewUser(GetTokenResponseData.AuthenticationTokenData authTokenData);
 
         IRtmUser LoadFromJson(string json);
     }

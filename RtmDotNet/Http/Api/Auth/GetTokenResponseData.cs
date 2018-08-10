@@ -25,9 +25,9 @@ namespace RtmDotNet.Http.Api.Auth
     public class GetTokenResponseData : RtmApiResponseData
     {
         [JsonProperty("auth")]
-        public AuthorizationTokenData AuthorizationToken { get; set; }
+        public AuthenticationTokenData AuthenticationToken { get; set; }
 
-        public class AuthorizationTokenData
+        public class AuthenticationTokenData
         {
             [JsonProperty("token")]
             public string Token { get; set; }

@@ -80,7 +80,7 @@ namespace RtmDotNet.UnitTests
         public void GetListRepository_ApiIsInitialized_CreatesListRepository()
         {
             Rtm.Init("test", "test");
-            var actual = Rtm.GetListRepository(new AuthorizationToken());
+            var actual = Rtm.GetListRepository(new AuthenticationToken());
             Assert.IsInstanceOf<IListRepository>(actual);
         }
 
@@ -94,7 +94,7 @@ namespace RtmDotNet.UnitTests
         [Test]
         public void GetListRepostiory_ApiNotInitialized_ThrowsInvalidOperationException()
         {
-            Assert.Throws<InvalidOperationException>(() => Rtm.GetListRepository(new AuthorizationToken()));
+            Assert.Throws<InvalidOperationException>(() => Rtm.GetListRepository(new AuthenticationToken()));
         }
     }
 }

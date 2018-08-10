@@ -32,9 +32,9 @@ namespace RtmDotNet.Lists
 
         private readonly IRtmApiClient _apiClient;
 
-        private readonly AuthorizationToken _authToken;
+        private readonly AuthenticationToken _authToken;
 
-        public ListRepository(IListsUrlFactory urlFactory, IRtmApiClient apiClient, AuthorizationToken authToken)
+        public ListRepository(IListsUrlFactory urlFactory, IRtmApiClient apiClient, AuthenticationToken authToken)
         {
             _urlFactory = urlFactory;
             _apiClient = apiClient;

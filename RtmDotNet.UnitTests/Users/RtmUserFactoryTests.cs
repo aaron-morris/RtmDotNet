@@ -39,9 +39,9 @@ namespace RtmDotNet.UnitTests.Users
         public void CreateNewUser_ValidAuthToken_InitsUserFromAuthTokenData()
         {
             // Setup
-            var fakeAuthToken = new GetTokenResponseData.AuthorizationTokenData
+            var fakeAuthToken = new GetTokenResponseData.AuthenticationTokenData
             {
-                User = new GetTokenResponseData.AuthorizationTokenData.UserInfo
+                User = new GetTokenResponseData.AuthenticationTokenData.UserInfo
                 {
                     FullName = ExpectedFullName,
                     UserId = ExpectedUserId,

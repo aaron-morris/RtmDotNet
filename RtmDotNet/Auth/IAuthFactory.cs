@@ -21,7 +21,7 @@ namespace RtmDotNet.Auth
 {
     public interface IAuthFactory
     {
-        IDesktopAuthorizer CreateDesktopAuthorizer();
+        IDesktopAuthenticator CreateDesktopAuthenticator();
 
         ITokenVerifier CreateTokenVerifier();
     }

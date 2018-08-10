@@ -91,7 +91,7 @@ namespace RtmDotNet.UnitTests.Http.Api.Auth
         }
 
         [Test]
-        public void CreateAuthorizationUrl_WithoutFrobParam_ReturnsAuthorizationUrl()
+        public void CreateAuthenticationUrl_WithoutFrobParam_ReturnsAuthenticationUrl()
         {
             // Setup
             const string expectedUrl = "My_Fake_Url";
@@ -109,14 +109,14 @@ namespace RtmDotNet.UnitTests.Http.Api.Auth
 
             // Execute
             var factory = GetItemUnderTest(fakeUrlBuilderFactory, fakePermissionConverter);
-            var actual = factory.CreateAuthorizationUrl(fakePermissionLevel);
+            var actual = factory.CreateAuthenticationUrl(fakePermissionLevel);
 
             // Verify
             Assert.AreEqual(expectedUrl, actual);
         }
 
         [Test]
-        public void CreateAuthorizationUrl_WithFrobParam_ReturnsAuthorizationUrl()
+        public void CreateAuthenticationUrl_WithFrobParam_ReturnsAuthenticationUrl()
         {
             // Setup
             const string expectedUrl = "My_Fake_Url";
@@ -135,7 +135,7 @@ namespace RtmDotNet.UnitTests.Http.Api.Auth
 
             // Execute
             var factory = GetItemUnderTest(fakeUrlBuilderFactory, fakePermissionConverter);
-            var actual = factory.CreateAuthorizationUrl(fakePermissionLevel, fakeFrob);
+            var actual = factory.CreateAuthenticationUrl(fakePermissionLevel, fakeFrob);
 
             // Verify
             Assert.AreEqual(expectedUrl, actual);

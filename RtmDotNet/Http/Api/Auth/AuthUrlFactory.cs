@@ -51,14 +51,14 @@ namespace RtmDotNet.Http.Api.Auth
             return getTokenUrlBuilder.BuildUrl();
         }
 
-        public string CreateAuthorizationUrl(PermissionLevel permissionLevel)
+        public string CreateAuthenticationUrl(PermissionLevel permissionLevel)
         {
             var permissionName = _permissionLevelConverter.ToString(permissionLevel);
             var authUrlBuilder = _urlBuilderFactory.CreateAuthUrlBuilder(permissionName);
             return authUrlBuilder.BuildUrl();
         }
 
-        public string CreateAuthorizationUrl(PermissionLevel permissionLevel, string frob)
+        public string CreateAuthenticationUrl(PermissionLevel permissionLevel, string frob)
         {
             var permissionName = _permissionLevelConverter.ToString(permissionLevel);
             var authUrlBuilder = _urlBuilderFactory.CreateAuthUrlBuilder(permissionName, frob);

@@ -34,7 +34,7 @@ namespace RtmDotNet.Users
         string FullName { get; set; }
 
         [JsonProperty("token")]
-        AuthorizationToken Token { get; set; }
+        AuthenticationToken Token { get; set; }
 
         string ToJson();
     }

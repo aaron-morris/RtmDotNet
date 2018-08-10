@@ -59,7 +59,7 @@ $@"{{
                 FullName = ExpectedFullName,
                 UserId = ExpectedUserId,
                 UserName = ExpectedUserName,
-                Token = new AuthorizationToken
+                Token = new AuthenticationToken
                 {
                     Id = ExpectedToken,
                     Permissions = ExpectedPermissionLevel

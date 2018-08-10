@@ -29,8 +29,8 @@ namespace RtmDotNet.Http.Api.Auth
 
         string CreateGetTokenUrl(string frob);
 
-        string CreateAuthorizationUrl(PermissionLevel permissionLevel);
+        string CreateAuthenticationUrl(PermissionLevel permissionLevel);
 
-        string CreateAuthorizationUrl(PermissionLevel permissionLevel, string frob);
+        string CreateAuthenticationUrl(PermissionLevel permissionLevel, string frob);
     }
 }

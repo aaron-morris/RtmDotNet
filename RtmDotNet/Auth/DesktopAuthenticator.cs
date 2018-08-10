@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="DesktopAuthorizer.cs" author="Aaron Morris">
+// <copyright file="DesktopAuthenticator.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ using RtmDotNet.Users;
 
 namespace RtmDotNet.Auth
 {
-    public class DesktopAuthorizer : IDesktopAuthorizer
+    public class DesktopAuthenticator : IDesktopAuthenticator
     {
         private readonly IAuthUrlFactory _urlFactory;
         private readonly IRtmApiClient _apiClient;
@@ -33,29 +33,29 @@ namespace RtmDotNet.Auth
 
         private string _frob;
 
-        public DesktopAuthorizer(IAuthUrlFactory urlFactory, IRtmApiClient apiClient, IRtmUserFactory userFactory)
+        public DesktopAuthenticator(IAuthUrlFactory urlFactory, IRtmApiClient apiClient, IRtmUserFactory userFactory)
         {
             _urlFactory = urlFactory;
             _apiClient = apiClient;
             _userFactory = userFactory;
         }
 
-        public async Task<string> GetAuthorizationUrlAsync(PermissionLevel permissionLevel)
+        public async Task<string> GetAuthenticationUrlAsync(PermissionLevel permissionLevel)
         {
             _frob = await GetNewFrobAsync();
-            return _urlFactory.CreateAuthorizationUrl(permissionLevel, _frob);
+            return _urlFactory.CreateAuthenticationUrl(permissionLevel, _frob);
         }
 
-        public async Task<IRtmUser> GetAuthorizedUserAsync()
+        public async Task<IRtmUser> GetAutheticatedUserAsync()
         {
             if (string.IsNullOrEmpty(_frob))
             {
-                throw new InvalidOperationException("You must generate an authorization URL before requesting a token.");
+                throw new InvalidOperationException("You must generate an authentication URL before requesting a token.");
             }
 
             var getTokenUrl = _urlFactory.CreateGetTokenUrl(_frob);
             var response = await _apiClient.GetAsync<GetTokenResponseData>(getTokenUrl);
-            var token = response.AuthorizationToken;
+            var token = response.AuthenticationToken;
             return _userFactory.CreateNewUser(token);
         }
 

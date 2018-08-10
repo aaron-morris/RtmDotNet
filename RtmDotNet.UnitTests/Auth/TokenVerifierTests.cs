@@ -37,7 +37,7 @@ namespace RtmDotNet.UnitTests.Auth
             // Setup
             const string fakeTokenUrl = "My_Fake_Token_Url";
             const string fakeTokenId = "My Fake Token";
-            var fakeToken = new AuthorizationToken { Id = fakeTokenId };
+            var fakeToken = new AuthenticationToken { Id = fakeTokenId };
             
             var fakeUrlFactory = Substitute.For<IAuthUrlFactory>();
             fakeUrlFactory.CreateCheckTokenUrl(fakeToken.Id).Returns(fakeTokenUrl);
@@ -58,7 +58,7 @@ namespace RtmDotNet.UnitTests.Auth
             // Setup
             const string fakeTokenUrl = "My_Fake_Token_Url";
             const string fakeTokenId = "My Fake Token";
-            var fakeToken = new AuthorizationToken { Id = fakeTokenId };
+            var fakeToken = new AuthenticationToken { Id = fakeTokenId };
 
             var fakeUrlFactory = Substitute.For<IAuthUrlFactory>();
             fakeUrlFactory.CreateCheckTokenUrl(fakeToken.Id).Returns(fakeTokenUrl);
@@ -82,7 +82,7 @@ namespace RtmDotNet.UnitTests.Auth
 
             const string fakeTokenUrl = "My_Fake_Token_Url";
             const string fakeTokenId = "My Fake Token";
-            var fakeToken = new AuthorizationToken { Id = fakeTokenId };
+            var fakeToken = new AuthenticationToken { Id = fakeTokenId };
 
             var fakeUrlFactory = Substitute.For<IAuthUrlFactory>();
             fakeUrlFactory.CreateCheckTokenUrl(fakeToken.Id).Returns(fakeTokenUrl);

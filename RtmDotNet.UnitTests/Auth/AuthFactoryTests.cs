@@ -26,12 +26,12 @@ namespace RtmDotNet.UnitTests.Auth
     public class AuthFactoryTests
     {
         [Test]
-        public void CreateDesktopAuthorizer_CreatesNewDesktopAuthorizer()
+        public void CreateDesktopAuthenticator_CreatesNewDesktopAuthenticator()
         {
             var factory = GetItemUnderTest();
-            var actual = factory.CreateDesktopAuthorizer();
+            var actual = factory.CreateDesktopAuthenticator();
 
-            Assert.IsInstanceOf<IDesktopAuthorizer>(actual);
+            Assert.IsInstanceOf<IDesktopAuthenticator>(actual);
         }
         [Test]
         public void CreateTokenVerifier_CreatesNewTokenVerifier()

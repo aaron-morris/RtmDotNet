@@ -34,7 +34,7 @@ namespace RtmDotNet.Auth
             _apiClient = apiClient;
         }
 
-        public async Task<bool> VerifyAsync(AuthorizationToken token)
+        public async Task<bool> VerifyAsync(AuthenticationToken token)
         {
             try
             {
