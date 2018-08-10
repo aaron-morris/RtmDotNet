@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RtmDotNet", "RtmDotNet\RtmD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RtmDotNet.UnitTests", "RtmDotNet.UnitTests\RtmDotNet.UnitTests.csproj", "{52BC455A-29C1-476B-91D2-2FE5DFD3A1BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RtmDotNet.ClientApp", "RtmDotNet.ClientApp\RtmDotNet.ClientApp.csproj", "{1981F199-E413-435C-84A6-3F7B7AF242B6}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{52BC455A-29C1-476B-91D2-2FE5DFD3A1BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52BC455A-29C1-476B-91D2-2FE5DFD3A1BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52BC455A-29C1-476B-91D2-2FE5DFD3A1BA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1981F199-E413-435C-84A6-3F7B7AF242B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1981F199-E413-435C-84A6-3F7B7AF242B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1981F199-E413-435C-84A6-3F7B7AF242B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1981F199-E413-435C-84A6-3F7B7AF242B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
