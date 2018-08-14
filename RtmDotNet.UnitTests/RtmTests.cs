@@ -21,6 +21,7 @@ using System;
 using NUnit.Framework;
 using RtmDotNet.Auth;
 using RtmDotNet.Lists;
+using RtmDotNet.Tasks;
 using RtmDotNet.Users;
 
 namespace RtmDotNet.UnitTests
@@ -95,6 +96,28 @@ namespace RtmDotNet.UnitTests
         public void GetListRepostiory_ApiNotInitialized_ThrowsInvalidOperationException()
         {
             Assert.Throws<InvalidOperationException>(() => Rtm.GetListRepository(new AuthenticationToken()));
+        }
+
+
+        [Test]
+        public void GetTaskRepository_ApiIsInitialized_CreatesTaskRepository()
+        {
+            Rtm.Init("test", "test");
+            var actual = Rtm.GetTaskRepository(new AuthenticationToken());
+            Assert.IsInstanceOf<ITaskRepository>(actual);
+        }
+
+        [Test]
+        public void GetTaskRepository_NullToken_ThrowsArgumentNullException()
+        {
+            Rtm.Init("test", "test");
+            Assert.Throws<ArgumentNullException>(() => Rtm.GetTaskRepository(null));
+        }
+
+        [Test]
+        public void GetTaskRepostiory_ApiNotInitialized_ThrowsInvalidOperationException()
+        {
+            Assert.Throws<InvalidOperationException>(() => Rtm.GetTaskRepository(new AuthenticationToken()));
         }
     }
 }

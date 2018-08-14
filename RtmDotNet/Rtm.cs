@@ -22,13 +22,19 @@ using RtmDotNet.Auth;
 using RtmDotNet.Http;
 using RtmDotNet.Http.Api;
 using RtmDotNet.Http.Api.Lists;
+using RtmDotNet.Http.Api.Tasks;
 using RtmDotNet.Lists;
+using RtmDotNet.Tasks;
 using RtmDotNet.Users;
 
 namespace RtmDotNet
 {
     public static class Rtm
     {
+        private static readonly IRtmApiClient ApiClient = new RtmApiClient(new RtmHttpClient());
+
+        private static IApiSignatureGenerator _signatureGenerator;
+
         public static string ApiKey { get; set; }
 
         public static string SharedSecret { get; set; }
@@ -47,6 +53,8 @@ namespace RtmDotNet
 
             ApiKey = apiKey;
             SharedSecret = sharedSecret;
+
+            _signatureGenerator = new ApiSignatureGenerator(new Md5DataHasher(), SharedSecret);
         }
 
         public static IAuthFactory GetAuthFactory()
@@ -64,14 +72,26 @@ namespace RtmDotNet
 
             EnforceInitialization();
 
-            var dataHasher = new Md5DataHasher();
-            var signatureGenerator = new ApiSignatureGenerator(dataHasher, SharedSecret);
-            var urlBuilderFactory = new ListsUrlBuilderFactory(ApiKey, signatureGenerator);
+            var urlBuilderFactory = new ListsUrlBuilderFactory(ApiKey, _signatureGenerator);
             var urlFactory = new ListsUrlFactory(urlBuilderFactory);
-            var httpClient = new RtmHttpClient();
-            var apiClient = new RtmApiClient(httpClient);
+            
+            return new ListRepository(urlFactory, ApiClient, authToken);
+        }
 
-            return new ListRepository(urlFactory, apiClient, authToken);
+        public static ITaskRepository GetTaskRepository(AuthenticationToken authToken)
+        {
+            if (authToken == null)
+            {
+                throw new ArgumentNullException(nameof(authToken));
+            }
+
+            EnforceInitialization();
+
+            var urlBuilderFactory = new TasksUrlBuilderFactory(ApiKey, _signatureGenerator);
+            var urlFactory = new TasksUrlFactory(urlBuilderFactory);
+            var taskConverter = new RtmTaskConverter();
+
+            return new TaskRepository(urlFactory, ApiClient, authToken, taskConverter);
         }
 
         public static IRtmUserFactory GetUserFactory()

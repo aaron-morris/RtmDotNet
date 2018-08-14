@@ -35,7 +35,7 @@ namespace RtmDotNet.UnitTests.Lists
         [TestCase(PermissionLevel.Read)]
         [TestCase(PermissionLevel.Write)]
         [TestCase(PermissionLevel.Delete)]
-        public async Task GetAllListsAsync_ValidTokenWithSufficientPermissions_ReturnsRtmLists(PermissionLevel permissionLevel)
+        public async Task GetAllListsAsync_SufficientPermissions_ReturnsRtmLists(PermissionLevel permissionLevel)
         {
             // Setup
             var expectedLists = new List<RtmList> {new RtmList{ Name = "My Fake List"}};

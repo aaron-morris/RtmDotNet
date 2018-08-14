@@ -42,10 +42,13 @@ namespace RtmDotNet.Examples
             {
                 Console.WriteLine();
                 Console.WriteLine("---------------------------------------------------------");
-                Console.WriteLine("Main Menu - Enter number option or enter 'x' to quit:");
+                Console.WriteLine("Main Menu - Select an option:");
                 Console.WriteLine();
                 Console.WriteLine("   1) Authentication Examples");
                 Console.WriteLine("   2) List Examples");
+                Console.WriteLine("   3) Task Examples");
+                Console.WriteLine();
+                Console.WriteLine("   0) Exit");
                 Console.WriteLine();
                 Console.WriteLine("---------------------------------------------------------");
                 Console.WriteLine();
@@ -62,8 +65,11 @@ namespace RtmDotNet.Examples
                         await ListExamples.Run();
                         break;
 
-                    case "x":
-                    case "X":
+                    case "3":
+                        await TasksExamples.Run();
+                        break;
+
+                    case "0":
                         return;
 
                     default:

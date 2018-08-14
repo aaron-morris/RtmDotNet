@@ -1,0 +1,47 @@
+﻿// -----------------------------------------------------------------------
+// <copyright file="GetListUrlBuilder.cs" author="Aaron Morris">
+//      This file is part of RtmDotNet.
+// 
+//     RtmDotNet is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     RtmDotNet is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with RtmDotNet.  If not, see <https://www.gnu.org/licenses/>.
+//  </copyright>
+// -----------------------------------------------------------------------
+
+using System;
+
+namespace RtmDotNet.Http.Api.Tasks
+{
+    public class GetListUrlBuilder : AuthenticatedApiUrlBuilder
+    {
+        public GetListUrlBuilder(string apiKey, IApiSignatureGenerator signatureGenerator, string authToken, DateTime? lastSync = null, string listId = "", string filter = "") 
+            : base(apiKey, signatureGenerator, MethodName, authToken)
+        {
+            if (!string.IsNullOrEmpty(listId))
+            {
+                Parameters.Add("list_id", listId);
+            }
+
+            if (!string.IsNullOrEmpty(filter))
+            {
+                Parameters.Add("filter", filter);
+            }
+
+            if (lastSync != null)
+            {
+                Parameters.Add("last_sync", lastSync.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"));
+            }
+        }
+
+        public static string MethodName => "rtm.tasks.getList";
+    }
+}
