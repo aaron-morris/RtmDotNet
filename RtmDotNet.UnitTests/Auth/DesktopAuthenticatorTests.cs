@@ -49,7 +49,7 @@ namespace RtmDotNet.UnitTests.Auth
 
             // Execute
             var authenticator = GetItemUnderTest(fakeUrlFactory, fakeApiClient);
-            var actual = await authenticator.GetAuthenticationUrlAsync(fakePermissionLevel);
+            var actual = await authenticator.GetAuthenticationUrlAsync(fakePermissionLevel).ConfigureAwait(false);
 
             // Verify
             Assert.AreEqual(expectedAuthUrl, actual);
@@ -80,8 +80,8 @@ namespace RtmDotNet.UnitTests.Auth
 
             // Execute
             var authenticator = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeUserFactory);
-            await authenticator.GetAuthenticationUrlAsync(fakePermissionLevel);
-            var actual = await authenticator.GetAutheticatedUserAsync();
+            await authenticator.GetAuthenticationUrlAsync(fakePermissionLevel).ConfigureAwait(false);
+            var actual = await authenticator.GetAutheticatedUserAsync().ConfigureAwait(false);
 
             // Verify
             Assert.AreSame(expectedUser, actual);

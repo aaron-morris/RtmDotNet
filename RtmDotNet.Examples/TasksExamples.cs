@@ -49,11 +49,11 @@ namespace RtmDotNet.Examples
                 switch (input)
                 {
                     case "1":
-                        await ListAllTasks();
+                        await ListAllTasks().ConfigureAwait(false);
                         break;
 
                     case "2":
-                        await ListOrphanedSubTasks();
+                        await ListOrphanedSubTasks().ConfigureAwait(false);
                         break;
 
                     case "0":
@@ -68,7 +68,7 @@ namespace RtmDotNet.Examples
 
         private static async Task ListAllTasks()
         {
-            var tasks = await GetAllTasks();
+            var tasks = await GetAllTasks().ConfigureAwait(false);
 
             foreach (var task in tasks)
             {
@@ -80,7 +80,7 @@ namespace RtmDotNet.Examples
 
         private static async Task ListOrphanedSubTasks()
         {
-            var tasks = await GetAllTasks();
+            var tasks = await GetAllTasks().ConfigureAwait(false);
             var orphanedSubtasks = tasks.Where(x => !string.IsNullOrEmpty(x.ParentTaskId)).ToList();
             foreach (var subtask in orphanedSubtasks)
             {
@@ -97,7 +97,7 @@ namespace RtmDotNet.Examples
             var user = Rtm.GetUserFactory().LoadFromJson(userJson);
 
             var taskRepository = Rtm.GetTaskRepository(user.Token);
-            return await taskRepository.GetAllTasksAsync();
+            return await taskRepository.GetAllTasksAsync().ConfigureAwait(false);
         }
 
         private static void WriteTask(IRtmTask task, int indentLevel)

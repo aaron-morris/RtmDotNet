@@ -48,7 +48,7 @@ namespace RtmDotNet.UnitTests.Http.Api
 
             // Execute
             var jsonHttpClient = GetItemUnderTest(fakeHttpClient);
-            var actual = await jsonHttpClient.GetAsync<FakeRtmResponseData>(fakeUrl);
+            var actual = await jsonHttpClient.GetAsync<FakeRtmResponseData>(fakeUrl).ConfigureAwait(false);
 
             // Verify
             Assert.AreEqual(expectedStatus, actual.Status);
@@ -70,7 +70,7 @@ namespace RtmDotNet.UnitTests.Http.Api
 
             // Execute
             var jsonHttpClient = GetItemUnderTest(fakeHttpClient);
-            var actual = Assert.ThrowsAsync<RtmException>(async () => await jsonHttpClient.GetAsync<FakeRtmResponseData>(fakeUrl));
+            var actual = Assert.ThrowsAsync<RtmException>(async () => await jsonHttpClient.GetAsync<FakeRtmResponseData>(fakeUrl).ConfigureAwait(false));
 
             // Verify
             Assert.AreEqual(expectedCode, actual.ErrorCode);

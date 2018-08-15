@@ -51,7 +51,7 @@ namespace RtmDotNet.UnitTests.Lists
 
             // Execute
             var listRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeAuthToken);
-            var actual = await listRepository.GetAllListsAsync();
+            var actual = await listRepository.GetAllListsAsync().ConfigureAwait(false);
 
             // Verify
             Assert.AreSame(expectedLists, actual);

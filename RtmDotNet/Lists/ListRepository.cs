@@ -49,7 +49,7 @@ namespace RtmDotNet.Lists
             }
 
             var url = _urlFactory.CreateGetListsUrl(_authToken.Id);
-            var response = await _apiClient.GetAsync<GetListResponseData>(url);
+            var response = await _apiClient.GetAsync<GetListResponseData>(url).ConfigureAwait(false);
             return response.Lists.Lists;
         }
     }

@@ -53,7 +53,7 @@ namespace RtmDotNet.Tasks
 
             var taskStatusFilter = includeCompletedTasks ? string.Empty : "status:incomplete";
             var url = _urlFactory.CreateGetListsUrl(_authToken.Id, filter:taskStatusFilter);
-            var response = await _apiClient.GetAsync<GetListResponseData>(url);
+            var response = await _apiClient.GetAsync<GetListResponseData>(url).ConfigureAwait(false);
             return _taskConverter.ConvertToTasks(response);
         }
     }

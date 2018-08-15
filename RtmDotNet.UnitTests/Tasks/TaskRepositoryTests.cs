@@ -53,7 +53,7 @@ namespace RtmDotNet.UnitTests.Tasks
 
             // Execute
             var taskRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeAuthToken, fakeTaskConverter);
-            var actual = await taskRepository.GetAllTasksAsync();
+            var actual = await taskRepository.GetAllTasksAsync().ConfigureAwait(false);
 
             // Verify
             Assert.AreSame(expectedTasks, actual);
@@ -80,7 +80,7 @@ namespace RtmDotNet.UnitTests.Tasks
 
             // Execute
             var taskRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeAuthToken, fakeTaskConverter);
-            var actual = await taskRepository.GetAllTasksAsync(false);
+            var actual = await taskRepository.GetAllTasksAsync(false).ConfigureAwait(false);
 
             // Verify
             Assert.AreSame(expectedTasks, actual);
@@ -107,7 +107,7 @@ namespace RtmDotNet.UnitTests.Tasks
 
             // Execute
             var taskRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeAuthToken, fakeTaskConverter);
-            var actual = await taskRepository.GetAllTasksAsync(true);
+            var actual = await taskRepository.GetAllTasksAsync(true).ConfigureAwait(false);
 
             // Verify
             Assert.AreSame(expectedTasks, actual);
@@ -123,7 +123,7 @@ namespace RtmDotNet.UnitTests.Tasks
             
             // Execute
             var taskRepository = GetItemUnderTest(fakeAuthToken);
-            var actual = await taskRepository.GetAllTasksAsync();
+            var actual = await taskRepository.GetAllTasksAsync().ConfigureAwait(false);
 
             // Verify
             Assert.Pass("No permission exception was thrown.");

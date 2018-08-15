@@ -45,7 +45,7 @@ namespace RtmDotNet.Http.Api
 
         public async Task<T> GetAsync<T>(string url) where T : RtmApiResponseData
         {
-            var responseData = await DoGetAsync<T>(url);
+            var responseData = await DoGetAsync<T>(url).ConfigureAwait(false);
             ThrowApiExceptionOnFailureResponse(responseData);
             return responseData;
         }
@@ -60,7 +60,7 @@ namespace RtmDotNet.Http.Api
 
         private async Task<T> DoGetAsync<T>(string url) where T : RtmApiResponseData
         {
-            var content = await SendApiRequest(url);
+            var content = await SendApiRequest(url).ConfigureAwait(false);
             var response = JsonConvert.DeserializeObject<RtmApiResponse<T>>(content);
             return response.Content;
         }
@@ -72,7 +72,7 @@ namespace RtmDotNet.Http.Api
             EnforceApiRateLimiting();
 
             // Send the request
-            return await _httpClient.GetStringAsync(url);
+            return await _httpClient.GetStringAsync(url).ConfigureAwait(false);
         }
 
         private void EnforceApiRateLimiting()

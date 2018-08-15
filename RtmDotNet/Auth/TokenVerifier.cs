@@ -39,7 +39,7 @@ namespace RtmDotNet.Auth
             try
             {
                 var checkTokenUrl = _urlFactory.CreateCheckTokenUrl(token.Id);
-                await _apiClient.GetAsync<GetTokenResponseData>(checkTokenUrl);
+                await _apiClient.GetAsync<GetTokenResponseData>(checkTokenUrl).ConfigureAwait(false);
 
                 return true;
             }

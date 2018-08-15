@@ -58,15 +58,15 @@ namespace RtmDotNet.Examples
                 switch (input)
                 {
                     case "1":
-                        await AuthenticationExamples.Run();
+                        await AuthenticationExamples.Run().ConfigureAwait(false);
                         break;
 
                     case "2":
-                        await ListExamples.Run();
+                        await ListExamples.Run().ConfigureAwait(false);
                         break;
 
                     case "3":
-                        await TasksExamples.Run();
+                        await TasksExamples.Run().ConfigureAwait(false);
                         break;
 
                     case "0":

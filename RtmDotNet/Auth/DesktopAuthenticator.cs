@@ -42,7 +42,7 @@ namespace RtmDotNet.Auth
 
         public async Task<string> GetAuthenticationUrlAsync(PermissionLevel permissionLevel)
         {
-            _frob = await GetNewFrobAsync();
+            _frob = await GetNewFrobAsync().ConfigureAwait(false);
             return _urlFactory.CreateAuthenticationUrl(permissionLevel, _frob);
         }
 
@@ -54,7 +54,7 @@ namespace RtmDotNet.Auth
             }
 
             var getTokenUrl = _urlFactory.CreateGetTokenUrl(_frob);
-            var response = await _apiClient.GetAsync<GetTokenResponseData>(getTokenUrl);
+            var response = await _apiClient.GetAsync<GetTokenResponseData>(getTokenUrl).ConfigureAwait(false);
             var token = response.AuthenticationToken;
             return _userFactory.CreateNewUser(token);
         }
@@ -62,7 +62,7 @@ namespace RtmDotNet.Auth
         private async Task<string> GetNewFrobAsync()
         {
             var getFrobUrl = _urlFactory.CreateGetFrobUrl();
-            var response = await _apiClient.GetAsync<GetFrobResponseData>(getFrobUrl);
+            var response = await _apiClient.GetAsync<GetFrobResponseData>(getFrobUrl).ConfigureAwait(false);
             return response.Frob;
         }
     }

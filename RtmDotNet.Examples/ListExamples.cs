@@ -44,7 +44,7 @@ namespace RtmDotNet.Examples
                 switch (input)
                 {
                     case "1":
-                        await DisplayAllLists();
+                        await DisplayAllLists().ConfigureAwait(false);
                         break;
 
                     case "x":
@@ -66,7 +66,7 @@ namespace RtmDotNet.Examples
 
             // Download a list of all the user's lists in RTM.
             var listRepository = Rtm.GetListRepository(user.Token);
-            var lists = await listRepository.GetAllListsAsync();
+            var lists = await listRepository.GetAllListsAsync().ConfigureAwait(false);
 
             // Display the list names, organized and sorted.
             var sortedLists = lists.ToList().OrderBy(x => x.Position).ThenBy(x => x.Name).ToList();

@@ -45,11 +45,11 @@ namespace RtmDotNet.Examples
                 switch (input)
                 {
                     case "1":
-                        await AuthenticateNewDesktopUser();
+                        await AuthenticateNewDesktopUser().ConfigureAwait(false);
                         break;
 
                     case "2":
-                        await CheckAuthenticationToken();
+                        await CheckAuthenticationToken().ConfigureAwait(false);
                         break;
 
                     case "x":
@@ -69,7 +69,7 @@ namespace RtmDotNet.Examples
             try
             {
                 var desktopAuthenticator = Rtm.GetAuthFactory().CreateDesktopAuthenticator();
-                var authUrl = await desktopAuthenticator.GetAuthenticationUrlAsync(PermissionLevel.Read);
+                var authUrl = await desktopAuthenticator.GetAuthenticationUrlAsync(PermissionLevel.Read).ConfigureAwait(false);
 
                 // Instruct the user to navigate to the URL and authorize your application.  They can continue using
                 // your application after authentication in the web browser is complete.
@@ -78,7 +78,7 @@ namespace RtmDotNet.Examples
                 Console.WriteLine("Step 3: Press [Enter] when finished");
                 Console.ReadLine();
 
-                var rtmUser = await desktopAuthenticator.GetAutheticatedUserAsync();
+                var rtmUser = await desktopAuthenticator.GetAutheticatedUserAsync().ConfigureAwait(false);
 
                 // Save the user data to a file or database.
                 var userJson = rtmUser.ToJson();
@@ -102,7 +102,7 @@ namespace RtmDotNet.Examples
 
             try
             {
-                if (await tokenVerifier.VerifyAsync(user.Token))
+                if (await tokenVerifier.VerifyAsync(user.Token).ConfigureAwait(false))
                 {
                     Console.WriteLine("Token is still valid.");
                 }

@@ -47,7 +47,7 @@ namespace RtmDotNet.UnitTests.Auth
 
             // Execute
             var tokenVerifier = GetItemUnderTest(fakeUrlFactory, fakeApiClient);
-            var actual = await tokenVerifier.VerifyAsync(fakeToken);
+            var actual = await tokenVerifier.VerifyAsync(fakeToken).ConfigureAwait(false);
 
             Assert.IsTrue(actual);
         }
@@ -68,7 +68,7 @@ namespace RtmDotNet.UnitTests.Auth
 
             // Execute
             var tokenVerifier = GetItemUnderTest(fakeUrlFactory, fakeApiClient);
-            var actual = await tokenVerifier.VerifyAsync(fakeToken);
+            var actual = await tokenVerifier.VerifyAsync(fakeToken).ConfigureAwait(false);
 
             Assert.IsFalse(actual);
         }
