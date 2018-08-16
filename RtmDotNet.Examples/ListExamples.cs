@@ -18,9 +18,11 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using RtmDotNet.Lists;
 
 namespace RtmDotNet.Examples
 {
@@ -32,9 +34,12 @@ namespace RtmDotNet.Examples
             {
                 Console.WriteLine();
                 Console.WriteLine("---------------------------------------------------------");
-                Console.WriteLine("List Examples - Enter number option or enter 'x' to return to main menu:");
+                Console.WriteLine("List Examples - Select an option:");
                 Console.WriteLine();
                 Console.WriteLine("   1) Display All Lists");
+                Console.WriteLine("   2) Display All Tasks from a List");
+                Console.WriteLine();
+                Console.WriteLine("   0) Exit");
                 Console.WriteLine();
                 Console.WriteLine("---------------------------------------------------------");
                 Console.WriteLine();
@@ -47,8 +52,11 @@ namespace RtmDotNet.Examples
                         await DisplayAllLists().ConfigureAwait(false);
                         break;
 
-                    case "x":
-                    case "X":
+                    case "2":
+                        await DisplayTasksFromList().ConfigureAwait(false);
+                        break;
+
+                    case "0":
                         return;
 
                     default:
@@ -58,7 +66,7 @@ namespace RtmDotNet.Examples
             }
         }
 
-        private static async Task DisplayAllLists()
+        private static async Task<IList<IRtmList>> DisplayAllLists()
         {
             // Load a user from JSON
             var userJson = File.ReadAllText("myRtmUser.json");
@@ -68,6 +76,43 @@ namespace RtmDotNet.Examples
             var listRepository = Rtm.GetListRepository(user.Token);
             var lists = await listRepository.GetAllListsAsync().ConfigureAwait(false);
 
+            WriteListsToConsole(lists);
+
+            return lists;
+        }
+
+        private static async Task DisplayTasksFromList()
+        {
+            var lists = await DisplayAllLists().ConfigureAwait(false);
+
+            Console.WriteLine();
+            Console.Write("Enter the Name or List ID of the list for which you would like to print tasks --> ");
+            var input = Console.ReadLine();
+
+            var list = lists.SingleOrDefault(x => x.Id.Equals(input) || x.Name.Equals(input));
+
+            if (list == null)
+            {
+                Console.WriteLine("Invalid Selection");
+                return;
+            }
+
+            var tasks = await list.GetTasksAsync().ConfigureAwait(false);
+            
+            // Display the task names, sorted.
+            var sortedTasks = tasks.ToList().OrderBy(x => x.Name).ToList();
+
+            Console.WriteLine();
+            Console.WriteLine($"Tasks in List '{list.Name}'");
+            Console.WriteLine("----------------------");
+            foreach (var task in sortedTasks)
+            {
+                Console.WriteLine(task.Name);
+            }
+        }
+
+        private static void WriteListsToConsole(IList<IRtmList> lists)
+        {
             // Display the list names, organized and sorted.
             var sortedLists = lists.ToList().OrderBy(x => x.Position).ThenBy(x => x.Name).ToList();
 
@@ -76,7 +121,7 @@ namespace RtmDotNet.Examples
             Console.WriteLine("----------------------");
             foreach (var systemList in sortedLists.Where(x => x.IsLocked))
             {
-                Console.WriteLine(systemList.Name);
+                Console.WriteLine($"[ID: {systemList.Id}] {systemList.Name}");
             }
 
             Console.WriteLine();
@@ -84,7 +129,7 @@ namespace RtmDotNet.Examples
             Console.WriteLine("----------------------");
             foreach (var userList in sortedLists.Where(x => !x.IsLocked && !x.IsArchived && !x.IsSmart))
             {
-                Console.WriteLine(userList.Name);
+                Console.WriteLine($"[ID: {userList.Id}] {userList.Name}");
             }
 
             Console.WriteLine();
@@ -92,7 +137,7 @@ namespace RtmDotNet.Examples
             Console.WriteLine("----------------------");
             foreach (var smartList in sortedLists.Where(x => x.IsSmart))
             {
-                Console.WriteLine(smartList.Name);
+                Console.WriteLine($"[ID: {smartList.Id}] {smartList.Name}");
             }
 
             Console.WriteLine();
@@ -100,7 +145,7 @@ namespace RtmDotNet.Examples
             Console.WriteLine("----------------------");
             foreach (var archivedList in sortedLists.Where(x => x.IsArchived))
             {
-                Console.WriteLine(archivedList.Name);
+                Console.WriteLine($"[ID: {archivedList.Id}] {archivedList.Name}");
             }
         }
     }

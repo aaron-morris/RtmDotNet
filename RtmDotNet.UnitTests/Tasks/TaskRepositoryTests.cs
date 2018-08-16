@@ -33,7 +33,7 @@ namespace RtmDotNet.UnitTests.Tasks
     public class TaskRepositoryTests
     {
         [Test]
-        public async Task GetAllListsAsync_DefaultOperation_IncludesIncompleteFilter()
+        public async Task GetAllTasksAsync_DefaultOperation_IncludesIncompleteFilter()
         {
             // Setup
             var expectedTasks = new List<IRtmTask> { new RtmTask { Name = "My Fake Task" } };
@@ -60,7 +60,7 @@ namespace RtmDotNet.UnitTests.Tasks
         }
 
         [Test]
-        public async Task GetAllListsAsync_ExplicitExcludeOption_IncludesIncompleteFilter()
+        public async Task GetAllTasksAsync_ExplicitExcludeOption_IncludesIncompleteFilter()
         {
             // Setup
             var expectedTasks = new List<IRtmTask> { new RtmTask { Name = "My Fake Task" } };
@@ -80,6 +80,7 @@ namespace RtmDotNet.UnitTests.Tasks
 
             // Execute
             var taskRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeAuthToken, fakeTaskConverter);
+            // ReSharper disable once RedundantArgumentDefaultValue
             var actual = await taskRepository.GetAllTasksAsync(false).ConfigureAwait(false);
 
             // Verify
@@ -87,7 +88,7 @@ namespace RtmDotNet.UnitTests.Tasks
         }
 
         [Test]
-        public async Task GetAllListsAsync_IncludeCompletedTasks_ExcludesIncompleteFilter()
+        public async Task GetAllTasksAsync_IncludeCompletedTasks_ExcludesIncompleteFilter()
         {
             // Setup
             var expectedTasks = new List<IRtmTask> { new RtmTask { Name = "My Fake Task" } };
@@ -116,21 +117,21 @@ namespace RtmDotNet.UnitTests.Tasks
         [TestCase(PermissionLevel.Read)]
         [TestCase(PermissionLevel.Write)]
         [TestCase(PermissionLevel.Delete)]
-        public async Task GetAllListsAsync_SufficientPermissions_NoPermissionException(PermissionLevel permissionLevel)
+        public async Task GetAllTasksAsync_SufficientPermissions_NoPermissionException(PermissionLevel permissionLevel)
         {
             // Setup
             var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = permissionLevel };
             
             // Execute
             var taskRepository = GetItemUnderTest(fakeAuthToken);
-            var actual = await taskRepository.GetAllTasksAsync().ConfigureAwait(false);
+            await taskRepository.GetAllTasksAsync().ConfigureAwait(false);
 
             // Verify
             Assert.Pass("No permission exception was thrown.");
         }
 
         [Test]
-        public void GetAllListsAsync_InsufficientPermissions_ThrowsInvalidOperationError()
+        public void GetAllTasksAsync_InsufficientPermissions_ThrowsInvalidOperationError()
         {
             // Setup
             var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = PermissionLevel.Undefined };
@@ -138,6 +139,117 @@ namespace RtmDotNet.UnitTests.Tasks
             // Execute
             var taskRepository = GetItemUnderTest(fakeAuthToken);
             Assert.ThrowsAsync<InvalidOperationException>(() => taskRepository.GetAllTasksAsync());
+        }
+        
+        [Test]
+        public async Task GetTasksByListIdAsync_DefaultOperation_IncludesIncompleteFilter()
+        {
+            // Setup
+            var expectedTasks = new List<IRtmTask> { new RtmTask { Name = "My Fake Task" } };
+            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = PermissionLevel.Read };
+            const string fakeListsUrl = "My Fake URL";
+
+            var fakeListId = "My Fake List ID";
+            var fakeUrlFactory = Substitute.For<ITasksUrlFactory>();
+            fakeUrlFactory.CreateGetListsUrl(fakeAuthToken.Id, listId:fakeListId, filter: "status:incomplete").Returns(fakeListsUrl);
+
+            var fakeResponseData = new GetListResponseData();
+            var fakeApiClient = Substitute.For<IRtmApiClient>();
+            fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
+
+            var fakeTaskConverter = Substitute.For<IRtmTaskConverter>();
+            fakeTaskConverter.ConvertToTasks(fakeResponseData).Returns(expectedTasks);
+
+            // Execute
+            var taskRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeAuthToken, fakeTaskConverter);
+            var actual = await taskRepository.GetTasksByListIdAsync(fakeListId).ConfigureAwait(false);
+
+            // Verify
+            Assert.AreSame(expectedTasks, actual);
+        }
+
+        [Test]
+        public async Task GetTasksByListIdAsync_ExplicitExcludeOption_IncludesIncompleteFilter()
+        {
+            // Setup
+            var expectedTasks = new List<IRtmTask> { new RtmTask { Name = "My Fake Task" } };
+
+            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = PermissionLevel.Read };
+            const string fakeListsUrl = "My Fake URL";
+
+            var fakeListId = "My Fake List ID";
+            var fakeUrlFactory = Substitute.For<ITasksUrlFactory>();
+            fakeUrlFactory.CreateGetListsUrl(fakeAuthToken.Id, listId: fakeListId, filter: "status:incomplete").Returns(fakeListsUrl);
+
+            var fakeResponseData = new GetListResponseData();
+            var fakeApiClient = Substitute.For<IRtmApiClient>();
+            fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
+
+            var fakeTaskConverter = Substitute.For<IRtmTaskConverter>();
+            fakeTaskConverter.ConvertToTasks(fakeResponseData).Returns(expectedTasks);
+
+            // Execute
+            var taskRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeAuthToken, fakeTaskConverter);
+            // ReSharper disable once RedundantArgumentDefaultValue
+            var actual = await taskRepository.GetTasksByListIdAsync(fakeListId, false).ConfigureAwait(false);
+
+            // Verify
+            Assert.AreSame(expectedTasks, actual);
+        }
+
+        [Test]
+        public async Task GetTasksByListIdAsync_IncludeCompletedTasks_ExcludesIncompleteFilter()
+        {
+            // Setup
+            var expectedTasks = new List<IRtmTask> { new RtmTask { Name = "My Fake Task" } };
+
+            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = PermissionLevel.Read };
+            const string fakeListsUrl = "My Fake URL";
+
+            var fakeListId = "My Fake List ID";
+            var fakeUrlFactory = Substitute.For<ITasksUrlFactory>();
+            fakeUrlFactory.CreateGetListsUrl(fakeAuthToken.Id, listId: fakeListId).Returns(fakeListsUrl);
+
+            var fakeResponseData = new GetListResponseData();
+            var fakeApiClient = Substitute.For<IRtmApiClient>();
+            fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
+
+            var fakeTaskConverter = Substitute.For<IRtmTaskConverter>();
+            fakeTaskConverter.ConvertToTasks(fakeResponseData).Returns(expectedTasks);
+
+            // Execute
+            var taskRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeAuthToken, fakeTaskConverter);
+            var actual = await taskRepository.GetTasksByListIdAsync(fakeListId, true).ConfigureAwait(false);
+
+            // Verify
+            Assert.AreSame(expectedTasks, actual);
+        }
+
+        [TestCase(PermissionLevel.Read)]
+        [TestCase(PermissionLevel.Write)]
+        [TestCase(PermissionLevel.Delete)]
+        public async Task GetTasksByListIdAsync_SufficientPermissions_NoPermissionException(PermissionLevel permissionLevel)
+        {
+            // Setup
+            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = permissionLevel };
+
+            // Execute
+            var taskRepository = GetItemUnderTest(fakeAuthToken);
+            await taskRepository.GetTasksByListIdAsync("Fake List ID").ConfigureAwait(false);
+
+            // Verify
+            Assert.Pass("No permission exception was thrown.");
+        }
+
+        [Test]
+        public void GetTasksByListIdAsync_InsufficientPermissions_ThrowsInvalidOperationError()
+        {
+            // Setup
+            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = PermissionLevel.Undefined };
+
+            // Execute
+            var taskRepository = GetItemUnderTest(fakeAuthToken);
+            Assert.ThrowsAsync<InvalidOperationException>(() => taskRepository.GetTasksByListIdAsync("Fake List ID"));
         }
 
         private TaskRepository GetItemUnderTest(AuthenticationToken authToken)

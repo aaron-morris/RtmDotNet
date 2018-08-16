@@ -17,9 +17,12 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using NSubstitute;
 using NUnit.Framework;
 using RtmDotNet.Lists;
+using RtmDotNet.Tasks;
 
 namespace RtmDotNet.UnitTests.Lists
 {
@@ -27,68 +30,27 @@ namespace RtmDotNet.UnitTests.Lists
     public class RtmListTests
     {
         [Test]
-        public void SystemList_ParsesFromJson()
+        public async Task GetTasksAsync_GetsTasksFromTaskRepo()
         {
             // Setup
-            const string json =
-                "{\r\n\t\t\t\t\t\"id\": \"123456\",\r\n\t\t\t\t\t\"name\": \"Inbox\",\r\n\t\t\t\t\t\"deleted\": \"0\",\r\n\t\t\t\t\t\"locked\": \"1\",\r\n\t\t\t\t\t\"archived\": \"0\",\r\n\t\t\t\t\t\"position\": \"-1\",\r\n\t\t\t\t\t\"smart\": \"0\",\r\n\t\t\t\t\t\"sort_order\": \"0\",\r\n\t\t\t\t\t\"permission\": \"owner\"\r\n\t\t\t\t}";
+            IList<IRtmTask> expectedTasks = new List<IRtmTask> {Substitute.For<IRtmTask>()};
+            const string fakeListId = "My Fake List ID";
+
+            var fakeTaskRepo = Substitute.For<ITaskRepository>();
+            fakeTaskRepo.GetTasksByListIdAsync(fakeListId).Returns(Task.FromResult(expectedTasks));
 
             // Execute
-            var actual = JsonConvert.DeserializeObject<RtmList>(json);
+            var list = GetItemUnderTest(fakeTaskRepo);
+            list.Id = fakeListId;
+            var actual = await list.GetTasksAsync().ConfigureAwait(false);
 
             // Verify
-            Assert.AreEqual("123456", actual.Id);
-            Assert.AreEqual("Inbox", actual.Name);
-            Assert.IsTrue(actual.IsLocked);
-            Assert.IsFalse(actual.IsArchived);
-            Assert.AreEqual(-1, actual.Position);
-            Assert.IsFalse(actual.IsSmart);
-            Assert.AreEqual(0, actual.SortOrder);
-            Assert.AreEqual("owner", actual.Permission);
+            CollectionAssert.AreEqual(expectedTasks, actual);
         }
 
-        [Test]
-        public void ArchivedList_ParsesFromJson()
+        private RtmList GetItemUnderTest(ITaskRepository taskRepository)
         {
-            // Setup
-            const string json =
-                "{\r\n\t\t\t\t\t\"id\": \"654321\",\r\n\t\t\t\t\t\"name\": \"My Archived List\",\r\n\t\t\t\t\t\"deleted\": \"0\",\r\n\t\t\t\t\t\"locked\": \"0\",\r\n\t\t\t\t\t\"archived\": \"1\",\r\n\t\t\t\t\t\"position\": \"0\",\r\n\t\t\t\t\t\"smart\": \"0\",\r\n\t\t\t\t\t\"sort_order\": \"0\",\r\n\t\t\t\t\t\"permission\": \"owner\"\r\n\t\t\t\t}";
-
-            // Execute
-            var actual = JsonConvert.DeserializeObject<RtmList>(json);
-
-            // Verify
-            Assert.AreEqual("654321", actual.Id);
-            Assert.AreEqual("My Archived List", actual.Name);
-            Assert.IsFalse(actual.IsLocked);
-            Assert.IsTrue(actual.IsArchived);
-            Assert.AreEqual(0, actual.Position);
-            Assert.IsFalse(actual.IsSmart);
-            Assert.AreEqual(0, actual.SortOrder);
-            Assert.AreEqual("owner", actual.Permission);
-        }
-
-        [Test]
-        public void SmartList_ParsesFromJson()
-        {
-            // Setup
-            const string json =
-                "{\r\n\t\t\t\t\t\"id\": \"654321\",\r\n\t\t\t\t\t\"name\": \"My Smart List\",\r\n\t\t\t\t\t\"deleted\": \"0\",\r\n\t\t\t\t\t\"locked\": \"0\",\r\n\t\t\t\t\t\"archived\": \"0\",\r\n\t\t\t\t\t\"position\": \"0\",\r\n\t\t\t\t\t\"smart\": \"1\",\r\n\t\t\t\t\t\"sort_order\": \"1\",\r\n\t\t\t\t\t\"filter\": \"not tagContains:. AND (list:Projects OR list:\\\"Someday/Maybe\\\") AND isSubtask:false\"\r\n\t\t\t\t}";
-                //  "{\r\n\t\t\t\t\t\"id\": \"654321\",\r\n\t\t\t\t\t\"name\": \"My Smart List\",\r\n\t\t\t\t\t\"deleted\": \"0\",\r\n\t\t\t\t\t\"locked\": \"0\",\r\n\t\t\t\t\t\"archived\": \"0\",\r\n\t\t\t\t\t\"position\": \"0\",\r\n\t\t\t\t\t\"smart\": \"1\",\r\n\t\t\t\t\t\"sort_order\": \"0\",\r\n\t\t\t\t\t\"permission\": \"owner\"\r\n\t\t\t\t}";
-            ;
-
-            // Execute
-            var actual = JsonConvert.DeserializeObject<RtmList>(json);
-
-            // Verify
-            Assert.AreEqual("654321", actual.Id);
-            Assert.AreEqual("My Smart List", actual.Name);
-            Assert.IsFalse(actual.IsLocked);
-            Assert.IsFalse(actual.IsArchived);
-            Assert.AreEqual(0, actual.Position);
-            Assert.IsTrue(actual.IsSmart);
-            Assert.AreEqual(1, actual.SortOrder);
-            Assert.AreEqual("not tagContains:. AND (list:Projects OR list:\"Someday/Maybe\") AND isSubtask:false", actual.Filter);
+            return new RtmList(taskRepository);
         }
     }
 }

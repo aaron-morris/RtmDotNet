@@ -34,14 +34,17 @@ namespace RtmDotNet.Lists
 
         private readonly AuthenticationToken _authToken;
 
-        public ListRepository(IListsUrlFactory urlFactory, IRtmApiClient apiClient, AuthenticationToken authToken)
+        private readonly IListConverter _listConverter;
+
+        public ListRepository(IListsUrlFactory urlFactory, IRtmApiClient apiClient, IListConverter listConverter, AuthenticationToken authToken)
         {
             _urlFactory = urlFactory;
             _apiClient = apiClient;
             _authToken = authToken;
+            _listConverter = listConverter;
         }
 
-        public async Task<IList<RtmList>> GetAllListsAsync()
+        public async Task<IList<IRtmList>> GetAllListsAsync()
         {
             if (_authToken.Permissions < PermissionLevel.Read)
             {
@@ -50,7 +53,7 @@ namespace RtmDotNet.Lists
 
             var url = _urlFactory.CreateGetListsUrl(_authToken.Id);
             var response = await _apiClient.GetAsync<GetListResponseData>(url).ConfigureAwait(false);
-            return response.Lists.Lists;
+            return _listConverter.ConvertToLists(response);
         }
     }
 }

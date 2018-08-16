@@ -56,5 +56,18 @@ namespace RtmDotNet.Tasks
             var response = await _apiClient.GetAsync<GetListResponseData>(url).ConfigureAwait(false);
             return _taskConverter.ConvertToTasks(response);
         }
+
+        public async Task<IList<IRtmTask>> GetTasksByListIdAsync(string listId, bool includeCompletedTasks = false)
+        {
+            if (_authToken.Permissions < PermissionLevel.Read)
+            {
+                throw new InvalidOperationException("This operation requires READ permissions of the RTM API.");
+            }
+
+            var taskStatusFilter = includeCompletedTasks ? string.Empty : "status:incomplete";
+            var url = _urlFactory.CreateGetListsUrl(_authToken.Id, listId: listId, filter: taskStatusFilter);
+            var response = await _apiClient.GetAsync<GetListResponseData>(url).ConfigureAwait(false);
+            return _taskConverter.ConvertToTasks(response);
+        }
     }
 }

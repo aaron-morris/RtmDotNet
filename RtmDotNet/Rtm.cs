@@ -74,8 +74,10 @@ namespace RtmDotNet
 
             var urlBuilderFactory = new ListsUrlBuilderFactory(ApiKey, _signatureGenerator);
             var urlFactory = new ListsUrlFactory(urlBuilderFactory);
-            
-            return new ListRepository(urlFactory, ApiClient, authToken);
+            var taskRepository = GetTaskRepository(authToken);
+            var listConverter = new ListConverter(taskRepository);
+
+            return new ListRepository(urlFactory, ApiClient, listConverter, authToken);
         }
 
         public static ITaskRepository GetTaskRepository(AuthenticationToken authToken)

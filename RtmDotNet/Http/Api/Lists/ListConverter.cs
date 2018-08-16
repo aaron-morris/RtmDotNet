@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="RtmList.cs" author="Aaron Morris">
+// <copyright file="ListConverter.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -18,41 +18,37 @@
 // -----------------------------------------------------------------------
 
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
+using RtmDotNet.Lists;
 using RtmDotNet.Tasks;
 
-namespace RtmDotNet.Lists
+namespace RtmDotNet.Http.Api.Lists
 {
-    public class RtmList : IRtmList
+    public class ListConverter : IListConverter
     {
         private readonly ITaskRepository _taskRepository;
 
-        public RtmList(ITaskRepository taskRepository)
+        public ListConverter(ITaskRepository taskRepository)
         {
             _taskRepository = taskRepository;
         }
-        
-        public string Id { get; set; }
 
-        public string Name { get; set; }
-
-        public bool IsLocked { get; set; }
-
-        public bool IsArchived { get; set; }
-
-        public bool IsSmart { get; set; }
-
-        public int Position { get; set; }
-
-        public int SortOrder { get; set; }
-
-        public string Permission { get; set; }
-
-        public string Filter { get; set; }
-
-        public async Task<IList<IRtmTask>> GetTasksAsync()
+        public IList<IRtmList> ConvertToLists(GetListResponseData responseData)
         {
-            return await _taskRepository.GetTasksByListIdAsync(Id).ConfigureAwait(false);
+            return responseData.Lists.Lists.Select(listData => new RtmList(_taskRepository)
+                {
+                    Id = listData.Id,
+                    Name = listData.Name,
+                    Filter = listData.Filter,
+                    IsArchived = listData.IsArchived,
+                    IsLocked = listData.IsLocked,
+                    IsSmart = listData.IsSmart,
+                    Permission = listData.Permission,
+                    Position = listData.Position,
+                    SortOrder = listData.SortOrder
+                })
+                .Cast<IRtmList>()
+                .ToList();
         }
     }
 }

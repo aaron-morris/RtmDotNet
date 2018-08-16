@@ -24,6 +24,6 @@ namespace RtmDotNet.Lists
 {
     public interface IListRepository
     {
-        Task<IList<RtmList>> GetAllListsAsync();
+        Task<IList<IRtmList>> GetAllListsAsync();
     }
 }

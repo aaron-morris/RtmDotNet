@@ -17,8 +17,6 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-using System;
-
 namespace RtmDotNet.Http.Api.Lists
 {
     public class ListsUrlBuilderFactory : UrlBuilderFactory, IListsUrlBuilderFactory

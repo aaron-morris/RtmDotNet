@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="IRtmUserFactory.cs" author="Aaron Morris">
+// <copyright file="IListConverter.cs" author="Aaron Morris">
 //      This file is part of RtmDotNet.
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
@@ -17,14 +17,13 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-using RtmDotNet.Http.Api.Auth;
+using System.Collections.Generic;
+using RtmDotNet.Lists;
 
-namespace RtmDotNet.Users
+namespace RtmDotNet.Http.Api.Lists
 {
-    public interface IRtmUserFactory
+    public interface IListConverter
     {
-        IRtmUser CreateNewUser(GetTokenResponseData.AuthenticationTokenData authTokenData);
-
-        IRtmUser LoadFromJson(string json);
+        IList<IRtmList> ConvertToLists(GetListResponseData responseData);
     }
 }

@@ -25,5 +25,7 @@ namespace RtmDotNet.Tasks
     public interface ITaskRepository
     {
         Task<IList<IRtmTask>> GetAllTasksAsync(bool includeCompletedTasks = false);
+
+        Task<IList<IRtmTask>> GetTasksByListIdAsync(string listId, bool includeCompletedTasks = false);
     }
 }

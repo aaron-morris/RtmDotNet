@@ -19,7 +19,6 @@
 
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using RtmDotNet.Lists;
 
 namespace RtmDotNet.Http.Api.Lists
 {
@@ -31,7 +30,40 @@ namespace RtmDotNet.Http.Api.Lists
         public class ListOfLists
         {
             [JsonProperty("list")]
-            public IList<RtmList> Lists { get; set; }
+            public IList<ListData> Lists { get; set; }
+        }
+
+        public class ListData
+        {
+            [JsonProperty("id")]
+            public string Id { get; set; }
+
+            [JsonProperty("name")]
+            public string Name { get; set; }
+
+            [JsonProperty("locked")]
+            [JsonConverter(typeof(RtmBooleanJsonConverter))]
+            public bool IsLocked { get; set; }
+
+            [JsonProperty("archived")]
+            [JsonConverter(typeof(RtmBooleanJsonConverter))]
+            public bool IsArchived { get; set; }
+
+            [JsonProperty("smart")]
+            [JsonConverter(typeof(RtmBooleanJsonConverter))]
+            public bool IsSmart { get; set; }
+
+            [JsonProperty("position")]
+            public int Position { get; set; }
+
+            [JsonProperty("sort_order")]
+            public int SortOrder { get; set; }
+
+            [JsonProperty("permission")]
+            public string Permission { get; set; }
+
+            [JsonProperty("filter")]
+            public string Filter { get; set; }
         }
     }
 }
