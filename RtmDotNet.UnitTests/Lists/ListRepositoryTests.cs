@@ -1,6 +1,7 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="ListRepositoryTests.cs" author="Aaron Morris">
-//      This file is part of RtmDotNet.
+//     This file is part of RtmDotNet.
+//     Copyright (c) 2018 Aaron Morris
+//     https://github.com/aaron-morris/RtmDotNet
 // 
 //     RtmDotNet is free software: you can redistribute it and/or modify
 //     it under the terms of the GNU General Public License as published by
@@ -14,9 +15,7 @@
 // 
 //     You should have received a copy of the GNU General Public License
 //     along with RtmDotNet.  If not, see <https://www.gnu.org/licenses/>.
-//  </copyright>
 // -----------------------------------------------------------------------
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
