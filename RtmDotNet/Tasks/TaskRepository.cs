@@ -29,13 +29,13 @@ namespace RtmDotNet.Tasks
     {
         private readonly ITasksUrlFactory _urlFactory;
 
-        private readonly IRtmApiClient _apiClient;
+        private readonly IApiClient _apiClient;
 
         private readonly AuthenticationToken _authToken;
 
-        private readonly IRtmTaskConverter _taskConverter;
+        private readonly ITaskConverter _taskConverter;
 
-        public TaskRepository(ITasksUrlFactory urlFactory, IRtmApiClient apiClient, AuthenticationToken authToken, IRtmTaskConverter taskConverter)
+        public TaskRepository(ITasksUrlFactory urlFactory, IApiClient apiClient, AuthenticationToken authToken, ITaskConverter taskConverter)
         {
             _urlFactory = urlFactory;
             _apiClient = apiClient;

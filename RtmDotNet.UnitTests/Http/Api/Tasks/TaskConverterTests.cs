@@ -25,7 +25,7 @@ using RtmDotNet.Http.Api.Tasks;
 namespace RtmDotNet.UnitTests.Http.Api.Tasks
 {
     [TestFixture]
-    public class RtmTaskConverterTests
+    public class TaskConverterTests
     {
         private const string ExpectedEstimate = "Fake Estimate";
         private const bool ExpectedHasDueTime = true;
@@ -144,9 +144,9 @@ namespace RtmDotNet.UnitTests.Http.Api.Tasks
             Assert.IsFalse(subTaskWithoutChildren.Subtasks.Any());
         }
 
-        private IRtmTaskConverter GetItemUnderTest()
+        private ITaskConverter GetItemUnderTest()
         {
-            return new RtmTaskConverter();
+            return new TaskConverter();
         }
 
         private GetListResponseData GetFakeResponsesData()

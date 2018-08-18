@@ -41,7 +41,7 @@ namespace RtmDotNet.UnitTests.Auth
             var fakeUrlFactory = Substitute.For<IAuthUrlFactory>();
             fakeUrlFactory.CreateCheckTokenUrl(fakeToken.Id).Returns(fakeTokenUrl);
 
-            var fakeApiClient = Substitute.For<IRtmApiClient>();
+            var fakeApiClient = Substitute.For<IApiClient>();
             fakeApiClient.GetAsync<GetTokenResponseData>(fakeTokenUrl).Returns(Task.FromResult(new GetTokenResponseData()));
 
             // Execute
@@ -62,7 +62,7 @@ namespace RtmDotNet.UnitTests.Auth
             var fakeUrlFactory = Substitute.For<IAuthUrlFactory>();
             fakeUrlFactory.CreateCheckTokenUrl(fakeToken.Id).Returns(fakeTokenUrl);
 
-            var fakeApiClient = Substitute.For<IRtmApiClient>();
+            var fakeApiClient = Substitute.For<IApiClient>();
             fakeApiClient.GetAsync<GetTokenResponseData>(fakeTokenUrl).Throws(new RtmException(RtmErrorCodes.InvalidAuthToken, String.Empty));
 
             // Execute
@@ -86,7 +86,7 @@ namespace RtmDotNet.UnitTests.Auth
             var fakeUrlFactory = Substitute.For<IAuthUrlFactory>();
             fakeUrlFactory.CreateCheckTokenUrl(fakeToken.Id).Returns(fakeTokenUrl);
 
-            var fakeApiClient = Substitute.For<IRtmApiClient>();
+            var fakeApiClient = Substitute.For<IApiClient>();
             fakeApiClient.GetAsync<GetTokenResponseData>(fakeTokenUrl).Throws(new RtmException(expectedErrorCode, expectedMessage));
 
             // Execute
@@ -97,7 +97,7 @@ namespace RtmDotNet.UnitTests.Auth
             Assert.AreEqual(expectedMessage, actual.Message);
         }
 
-        private TokenVerifier GetItemUnderTest(IAuthUrlFactory urlFactory, IRtmApiClient apiClient)
+        private TokenVerifier GetItemUnderTest(IAuthUrlFactory urlFactory, IApiClient apiClient)
         {
             return new TokenVerifier(urlFactory, apiClient);
         }

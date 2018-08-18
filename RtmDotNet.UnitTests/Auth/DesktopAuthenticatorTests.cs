@@ -43,7 +43,7 @@ namespace RtmDotNet.UnitTests.Auth
             fakeUrlFactory.CreateGetFrobUrl().Returns(fakeFrobUrl);
             fakeUrlFactory.CreateAuthenticationUrl(fakePermissionLevel, fakeFrob).Returns(expectedAuthUrl);
 
-            var fakeApiClient = Substitute.For<IRtmApiClient>();
+            var fakeApiClient = Substitute.For<IApiClient>();
             fakeApiClient.GetAsync<GetFrobResponseData>(fakeFrobUrl).Returns(Task.FromResult(new GetFrobResponseData { Frob = fakeFrob}));
 
             // Execute
@@ -70,11 +70,11 @@ namespace RtmDotNet.UnitTests.Auth
             fakeUrlFactory.CreateGetFrobUrl().Returns(fakeFrobUrl);
             fakeUrlFactory.CreateGetTokenUrl(fakeFrob).Returns(fakeTokenUrl);
 
-            var fakeApiClient = Substitute.For<IRtmApiClient>();
+            var fakeApiClient = Substitute.For<IApiClient>();
             fakeApiClient.GetAsync<GetFrobResponseData>(fakeFrobUrl).Returns(Task.FromResult(new GetFrobResponseData { Frob = fakeFrob }));
             fakeApiClient.GetAsync<GetTokenResponseData>(fakeTokenUrl).Returns(Task.FromResult(new GetTokenResponseData { AuthenticationToken = fakeAuthTokenData }));
 
-            var fakeUserFactory = Substitute.For<IRtmUserFactory>();
+            var fakeUserFactory = Substitute.For<IUserFactory>();
             fakeUserFactory.CreateNewUser(fakeAuthTokenData).ReturnsForAnyArgs(expectedUser);
 
             // Execute
@@ -101,11 +101,11 @@ namespace RtmDotNet.UnitTests.Auth
             fakeUrlFactory.CreateGetFrobUrl().Returns(fakeFrobUrl);
             fakeUrlFactory.CreateGetTokenUrl(fakeFrob).Returns(fakeTokenUrl);
 
-            var fakeApiClient = Substitute.For<IRtmApiClient>();
+            var fakeApiClient = Substitute.For<IApiClient>();
             fakeApiClient.GetAsync<GetFrobResponseData>(fakeFrobUrl).Returns(Task.FromResult(new GetFrobResponseData { Frob = fakeFrob }));
             fakeApiClient.GetAsync<GetTokenResponseData>(fakeTokenUrl).Returns(Task.FromResult(new GetTokenResponseData { AuthenticationToken = fakeAuthToken }));
 
-            var fakeUserFactory = Substitute.For<IRtmUserFactory>();
+            var fakeUserFactory = Substitute.For<IUserFactory>();
             fakeUserFactory.CreateNewUser(fakeAuthToken).ReturnsForAnyArgs(expectedUser);
 
             // Execute
@@ -113,12 +113,12 @@ namespace RtmDotNet.UnitTests.Auth
             Assert.ThrowsAsync<InvalidOperationException>(() => authenticator.GetAutheticatedUserAsync());
         }
 
-        private DesktopAuthenticator GetItemUnderTest(IAuthUrlFactory urlFactory, IRtmApiClient apiClient)
+        private DesktopAuthenticator GetItemUnderTest(IAuthUrlFactory urlFactory, IApiClient apiClient)
         {
-            return GetItemUnderTest(urlFactory, apiClient, Substitute.For<IRtmUserFactory>());
+            return GetItemUnderTest(urlFactory, apiClient, Substitute.For<IUserFactory>());
         }
 
-        private DesktopAuthenticator GetItemUnderTest(IAuthUrlFactory urlFactory, IRtmApiClient apiClient, IRtmUserFactory userFactory)
+        private DesktopAuthenticator GetItemUnderTest(IAuthUrlFactory urlFactory, IApiClient apiClient, IUserFactory userFactory)
         {
             return new DesktopAuthenticator(urlFactory, apiClient, userFactory);
         }

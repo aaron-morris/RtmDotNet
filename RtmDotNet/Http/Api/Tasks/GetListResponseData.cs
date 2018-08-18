@@ -22,7 +22,7 @@ using Newtonsoft.Json;
 
 namespace RtmDotNet.Http.Api.Tasks
 {
-    public class GetListResponseData : RtmApiResponseData
+    public class GetListResponseData : ApiResponseData
     {
         [JsonProperty("tasks")]
         public ListOfLists Lists { get; set; }

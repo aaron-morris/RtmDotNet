@@ -25,9 +25,9 @@ namespace RtmDotNet.Auth
     public class TokenVerifier : ITokenVerifier
     {
         private readonly IAuthUrlFactory _urlFactory;
-        private readonly IRtmApiClient _apiClient;
+        private readonly IApiClient _apiClient;
 
-        public TokenVerifier(IAuthUrlFactory urlFactory, IRtmApiClient apiClient)
+        public TokenVerifier(IAuthUrlFactory urlFactory, IApiClient apiClient)
         {
             _urlFactory = urlFactory;
             _apiClient = apiClient;

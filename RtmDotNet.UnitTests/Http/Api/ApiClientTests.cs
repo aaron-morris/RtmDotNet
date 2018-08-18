@@ -30,7 +30,7 @@ using RtmDotNet.Http.Api;
 namespace RtmDotNet.UnitTests.Http.Api
 {
     [TestFixture]
-    public class RtmApiClientTests
+    public class ApiClientTests
     {
         [Test]
         public async Task GetAsync_ParsesJsonToReturnObject()
@@ -47,7 +47,7 @@ namespace RtmDotNet.UnitTests.Http.Api
 
             // Execute
             var jsonHttpClient = GetItemUnderTest(fakeHttpClient);
-            var actual = await jsonHttpClient.GetAsync<FakeRtmResponseData>(fakeUrl).ConfigureAwait(false);
+            var actual = await jsonHttpClient.GetAsync<FakeResponseData>(fakeUrl).ConfigureAwait(false);
 
             // Verify
             Assert.AreEqual(expectedStatus, actual.Status);
@@ -69,7 +69,7 @@ namespace RtmDotNet.UnitTests.Http.Api
 
             // Execute
             var jsonHttpClient = GetItemUnderTest(fakeHttpClient);
-            var actual = Assert.ThrowsAsync<RtmException>(async () => await jsonHttpClient.GetAsync<FakeRtmResponseData>(fakeUrl).ConfigureAwait(false));
+            var actual = Assert.ThrowsAsync<RtmException>(async () => await jsonHttpClient.GetAsync<FakeResponseData>(fakeUrl).ConfigureAwait(false));
 
             // Verify
             Assert.AreEqual(expectedCode, actual.ErrorCode);
@@ -87,11 +87,11 @@ namespace RtmDotNet.UnitTests.Http.Api
 
             var tasks = new List<Task>
             {
-                apiClient.GetAsync<FakeRtmResponseData>(string.Empty),
-                apiClient.GetAsync<FakeRtmResponseData>(string.Empty),
-                apiClient.GetAsync<FakeRtmResponseData>(string.Empty),
-                apiClient.GetAsync<FakeRtmResponseData>(string.Empty),
-                apiClient.GetAsync<FakeRtmResponseData>(string.Empty)
+                apiClient.GetAsync<FakeResponseData>(string.Empty),
+                apiClient.GetAsync<FakeResponseData>(string.Empty),
+                apiClient.GetAsync<FakeResponseData>(string.Empty),
+                apiClient.GetAsync<FakeResponseData>(string.Empty),
+                apiClient.GetAsync<FakeResponseData>(string.Empty)
             };
 
             Task.WaitAll(tasks.ToArray());
@@ -108,12 +108,12 @@ namespace RtmDotNet.UnitTests.Http.Api
             }
         }
 
-        private RtmApiClient GetItemUnderTest(IHttpClient httpClient)
+        private ApiClient GetItemUnderTest(IHttpClient httpClient)
         {
-            return new RtmApiClient(httpClient);
+            return new ApiClient(httpClient);
         }
 
-        private class FakeRtmResponseData : RtmApiResponseData
+        private class FakeResponseData : ApiResponseData
         {
             [JsonProperty("fake_property")]
             public string MyFakeProperty { get; set; }

@@ -44,10 +44,10 @@ namespace RtmDotNet.UnitTests.Tasks
             fakeUrlFactory.CreateGetListsUrl(fakeAuthToken.Id, filter: "status:incomplete").Returns(fakeListsUrl);
 
             var fakeResponseData = new GetListResponseData();
-            var fakeApiClient = Substitute.For<IRtmApiClient>();
+            var fakeApiClient = Substitute.For<IApiClient>();
             fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
 
-            var fakeTaskConverter = Substitute.For<IRtmTaskConverter>();
+            var fakeTaskConverter = Substitute.For<ITaskConverter>();
             fakeTaskConverter.ConvertToTasks(fakeResponseData).Returns(expectedTasks);
 
             // Execute
@@ -71,10 +71,10 @@ namespace RtmDotNet.UnitTests.Tasks
             fakeUrlFactory.CreateGetListsUrl(fakeAuthToken.Id, filter: "status:incomplete").Returns(fakeListsUrl);
 
             var fakeResponseData = new GetListResponseData();
-            var fakeApiClient = Substitute.For<IRtmApiClient>();
+            var fakeApiClient = Substitute.For<IApiClient>();
             fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
 
-            var fakeTaskConverter = Substitute.For<IRtmTaskConverter>();
+            var fakeTaskConverter = Substitute.For<ITaskConverter>();
             fakeTaskConverter.ConvertToTasks(fakeResponseData).Returns(expectedTasks);
 
             // Execute
@@ -99,10 +99,10 @@ namespace RtmDotNet.UnitTests.Tasks
             fakeUrlFactory.CreateGetListsUrl(fakeAuthToken.Id).Returns(fakeListsUrl);
 
             var fakeResponseData = new GetListResponseData();
-            var fakeApiClient = Substitute.For<IRtmApiClient>();
+            var fakeApiClient = Substitute.For<IApiClient>();
             fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
 
-            var fakeTaskConverter = Substitute.For<IRtmTaskConverter>();
+            var fakeTaskConverter = Substitute.For<ITaskConverter>();
             fakeTaskConverter.ConvertToTasks(fakeResponseData).Returns(expectedTasks);
 
             // Execute
@@ -153,10 +153,10 @@ namespace RtmDotNet.UnitTests.Tasks
             fakeUrlFactory.CreateGetListsUrl(fakeAuthToken.Id, listId:fakeListId, filter: "status:incomplete").Returns(fakeListsUrl);
 
             var fakeResponseData = new GetListResponseData();
-            var fakeApiClient = Substitute.For<IRtmApiClient>();
+            var fakeApiClient = Substitute.For<IApiClient>();
             fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
 
-            var fakeTaskConverter = Substitute.For<IRtmTaskConverter>();
+            var fakeTaskConverter = Substitute.For<ITaskConverter>();
             fakeTaskConverter.ConvertToTasks(fakeResponseData).Returns(expectedTasks);
 
             // Execute
@@ -181,10 +181,10 @@ namespace RtmDotNet.UnitTests.Tasks
             fakeUrlFactory.CreateGetListsUrl(fakeAuthToken.Id, listId: fakeListId, filter: "status:incomplete").Returns(fakeListsUrl);
 
             var fakeResponseData = new GetListResponseData();
-            var fakeApiClient = Substitute.For<IRtmApiClient>();
+            var fakeApiClient = Substitute.For<IApiClient>();
             fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
 
-            var fakeTaskConverter = Substitute.For<IRtmTaskConverter>();
+            var fakeTaskConverter = Substitute.For<ITaskConverter>();
             fakeTaskConverter.ConvertToTasks(fakeResponseData).Returns(expectedTasks);
 
             // Execute
@@ -210,10 +210,10 @@ namespace RtmDotNet.UnitTests.Tasks
             fakeUrlFactory.CreateGetListsUrl(fakeAuthToken.Id, listId: fakeListId).Returns(fakeListsUrl);
 
             var fakeResponseData = new GetListResponseData();
-            var fakeApiClient = Substitute.For<IRtmApiClient>();
+            var fakeApiClient = Substitute.For<IApiClient>();
             fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
 
-            var fakeTaskConverter = Substitute.For<IRtmTaskConverter>();
+            var fakeTaskConverter = Substitute.For<ITaskConverter>();
             fakeTaskConverter.ConvertToTasks(fakeResponseData).Returns(expectedTasks);
 
             // Execute
@@ -253,10 +253,10 @@ namespace RtmDotNet.UnitTests.Tasks
 
         private TaskRepository GetItemUnderTest(AuthenticationToken authToken)
         {
-            return GetItemUnderTest(Substitute.For<ITasksUrlFactory>(), Substitute.For<IRtmApiClient>(), authToken, Substitute.For<IRtmTaskConverter>());
+            return GetItemUnderTest(Substitute.For<ITasksUrlFactory>(), Substitute.For<IApiClient>(), authToken, Substitute.For<ITaskConverter>());
         }
 
-        private TaskRepository GetItemUnderTest(ITasksUrlFactory urlFactory, IRtmApiClient apiClient, AuthenticationToken authToken, IRtmTaskConverter taskConverter)
+        private TaskRepository GetItemUnderTest(ITasksUrlFactory urlFactory, IApiClient apiClient, AuthenticationToken authToken, ITaskConverter taskConverter)
         {
             return new TaskRepository(urlFactory, apiClient, authToken, taskConverter);
         }

@@ -92,7 +92,7 @@ namespace RtmDotNet.UnitTests.Http.Api.Lists
         public void ListOfLists_ParsesFromJson()
         {
             // Execute
-            var actual = JsonConvert.DeserializeObject<RtmApiResponse<GetListResponseData>>(FullResponseJson).Content;
+            var actual = JsonConvert.DeserializeObject<ApiResponse<GetListResponseData>>(FullResponseJson).Content;
 
             // Verify
             Assert.AreEqual("ok", actual.Status);

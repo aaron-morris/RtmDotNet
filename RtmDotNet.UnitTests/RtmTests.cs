@@ -59,7 +59,7 @@ namespace RtmDotNet.UnitTests
         public void GetUserFactory_CreatesUserFactory()
         {
             var actual = Rtm.GetUserFactory();
-            Assert.IsInstanceOf<IRtmUserFactory>(actual);
+            Assert.IsInstanceOf<IUserFactory>(actual);
         }
 
         [Test]

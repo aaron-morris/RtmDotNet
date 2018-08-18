@@ -20,7 +20,7 @@ using Newtonsoft.Json;
 
 namespace RtmDotNet.Http.Api.Auth
 {
-    public class GetFrobResponseData : RtmApiResponseData
+    public class GetFrobResponseData : ApiResponseData
     {
         [JsonProperty("frob")]
         public string Frob { get; set; }

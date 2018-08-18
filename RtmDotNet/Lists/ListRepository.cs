@@ -29,13 +29,13 @@ namespace RtmDotNet.Lists
     {
         private readonly IListsUrlFactory _urlFactory;
 
-        private readonly IRtmApiClient _apiClient;
+        private readonly IApiClient _apiClient;
 
         private readonly AuthenticationToken _authToken;
 
         private readonly IListConverter _listConverter;
 
-        public ListRepository(IListsUrlFactory urlFactory, IRtmApiClient apiClient, IListConverter listConverter, AuthenticationToken authToken)
+        public ListRepository(IListsUrlFactory urlFactory, IApiClient apiClient, IListConverter listConverter, AuthenticationToken authToken)
         {
             _urlFactory = urlFactory;
             _apiClient = apiClient;

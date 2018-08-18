@@ -27,12 +27,12 @@ namespace RtmDotNet.Auth
     public class DesktopAuthenticator : IDesktopAuthenticator
     {
         private readonly IAuthUrlFactory _urlFactory;
-        private readonly IRtmApiClient _apiClient;
-        private readonly IRtmUserFactory _userFactory;
+        private readonly IApiClient _apiClient;
+        private readonly IUserFactory _userFactory;
 
         private string _frob;
 
-        public DesktopAuthenticator(IAuthUrlFactory urlFactory, IRtmApiClient apiClient, IRtmUserFactory userFactory)
+        public DesktopAuthenticator(IAuthUrlFactory urlFactory, IApiClient apiClient, IUserFactory userFactory)
         {
             _urlFactory = urlFactory;
             _apiClient = apiClient;

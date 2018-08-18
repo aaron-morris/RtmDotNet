@@ -16,14 +16,12 @@
 //     You should have received a copy of the GNU General Public License
 //     along with RtmDotNet.  If not, see <https://www.gnu.org/licenses/>.
 // -----------------------------------------------------------------------
-using RtmDotNet.Http.Api.Auth;
+using System.Threading.Tasks;
 
-namespace RtmDotNet.Users
+namespace RtmDotNet.Http.Api
 {
-    public interface IRtmUserFactory
+    public interface IApiClient
     {
-        IRtmUser CreateNewUser(GetTokenResponseData.AuthenticationTokenData authTokenData);
-
-        IRtmUser LoadFromJson(string json);
+        Task<T> GetAsync<T>(string url) where T : ApiResponseData;
     }
 }

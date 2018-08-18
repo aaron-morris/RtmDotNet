@@ -42,8 +42,8 @@ namespace RtmDotNet.Auth
             var permissionLevelConverter = new PermissionLevelConverter();
             var urlFactory = new AuthUrlFactory(urlBuilderFactory, permissionLevelConverter);
             var httpClient = new RtmHttpClient();
-            var apiClient = new RtmApiClient(httpClient);
-            var userFactory = new RtmUserFactory();
+            var apiClient = new ApiClient(httpClient);
+            var userFactory = new UserFactory();
 
             return new DesktopAuthenticator(urlFactory, apiClient, userFactory);
         }
@@ -56,7 +56,7 @@ namespace RtmDotNet.Auth
             var permissionLevelConverter = new PermissionLevelConverter();
             var urlFactory = new AuthUrlFactory(urlBuilderFactory, permissionLevelConverter);
             var httpClient = new RtmHttpClient();
-            var apiClient = new RtmApiClient(httpClient);
+            var apiClient = new ApiClient(httpClient);
 
             return new TokenVerifier(urlFactory, apiClient);
         }

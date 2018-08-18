@@ -21,7 +21,7 @@ using RtmDotNet.Auth;
 
 namespace RtmDotNet.Http.Api.Auth
 {
-    public class GetTokenResponseData : RtmApiResponseData
+    public class GetTokenResponseData : ApiResponseData
     {
         [JsonProperty("auth")]
         public AuthenticationTokenData AuthenticationToken { get; set; }

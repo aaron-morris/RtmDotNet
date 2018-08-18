@@ -24,7 +24,7 @@ using Newtonsoft.Json;
 
 namespace RtmDotNet.Http.Api
 {
-    public class RtmApiClient : IRtmApiClient
+    public class ApiClient : IApiClient
     {
         private const string DefaultMediaType = "application/json";
 
@@ -35,21 +35,21 @@ namespace RtmDotNet.Http.Api
 
         private DateTime _lastRequestTime;
 
-        public RtmApiClient(IHttpClient httpClient)
+        public ApiClient(IHttpClient httpClient)
         {
             _httpClient = httpClient;
 
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(DefaultMediaType));
         }
 
-        public async Task<T> GetAsync<T>(string url) where T : RtmApiResponseData
+        public async Task<T> GetAsync<T>(string url) where T : ApiResponseData
         {
             var responseData = await DoGetAsync<T>(url).ConfigureAwait(false);
             ThrowApiExceptionOnFailureResponse(responseData);
             return responseData;
         }
 
-        private void ThrowApiExceptionOnFailureResponse(RtmApiResponseData responseData)
+        private void ThrowApiExceptionOnFailureResponse(ApiResponseData responseData)
         {
             if (responseData.Status.Equals("fail"))
             {
@@ -57,10 +57,10 @@ namespace RtmDotNet.Http.Api
             }
         }
 
-        private async Task<T> DoGetAsync<T>(string url) where T : RtmApiResponseData
+        private async Task<T> DoGetAsync<T>(string url) where T : ApiResponseData
         {
             var content = await SendApiRequest(url).ConfigureAwait(false);
-            var response = JsonConvert.DeserializeObject<RtmApiResponse<T>>(content);
+            var response = JsonConvert.DeserializeObject<ApiResponse<T>>(content);
             return response.Content;
         }
 

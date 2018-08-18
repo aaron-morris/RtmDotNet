@@ -21,7 +21,7 @@ using Newtonsoft.Json;
 
 namespace RtmDotNet.Http.Api.Lists
 {
-    public class GetListResponseData : RtmApiResponseData
+    public class GetListResponseData : ApiResponseData
     {
         [JsonProperty("lists")]
         public ListOfLists Lists { get; set; }

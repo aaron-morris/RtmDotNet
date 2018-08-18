@@ -104,9 +104,9 @@ $@"{{
             Assert.Throws<ArgumentNullException>(() => factory.LoadFromJson(json));
         }
 
-        private RtmUserFactory GetItemUnderTest()
+        private UserFactory GetItemUnderTest()
         {
-            return new RtmUserFactory();
+            return new UserFactory();
         }
     }
 }

@@ -22,7 +22,7 @@ using RtmDotNet.Tasks;
 
 namespace RtmDotNet.Http.Api.Tasks
 {
-    public class RtmTaskConverter : IRtmTaskConverter
+    public class TaskConverter : ITaskConverter
     {
         public IList<IRtmTask> ConvertToTasks(GetListResponseData responseData)
         {

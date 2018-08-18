@@ -30,7 +30,7 @@ namespace RtmDotNet
 {
     public static class Rtm
     {
-        private static readonly IRtmApiClient ApiClient = new RtmApiClient(new RtmHttpClient());
+        private static readonly IApiClient ApiClient = new ApiClient(new RtmHttpClient());
 
         private static IApiSignatureGenerator _signatureGenerator;
 
@@ -90,14 +90,14 @@ namespace RtmDotNet
 
             var urlBuilderFactory = new TasksUrlBuilderFactory(ApiKey, _signatureGenerator);
             var urlFactory = new TasksUrlFactory(urlBuilderFactory);
-            var taskConverter = new RtmTaskConverter();
+            var taskConverter = new TaskConverter();
 
             return new TaskRepository(urlFactory, ApiClient, authToken, taskConverter);
         }
 
-        public static IRtmUserFactory GetUserFactory()
+        public static IUserFactory GetUserFactory()
         {
-            return new RtmUserFactory();
+            return new UserFactory();
         }
 
         private static void EnforceInitialization()

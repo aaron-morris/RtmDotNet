@@ -16,13 +16,14 @@
 //     You should have received a copy of the GNU General Public License
 //     along with RtmDotNet.  If not, see <https://www.gnu.org/licenses/>.
 // -----------------------------------------------------------------------
-using System.Collections.Generic;
-using RtmDotNet.Tasks;
+using RtmDotNet.Http.Api.Auth;
 
-namespace RtmDotNet.Http.Api.Tasks
+namespace RtmDotNet.Users
 {
-    public interface IRtmTaskConverter
+    public interface IUserFactory
     {
-        IList<IRtmTask> ConvertToTasks(GetListResponseData responseData);
+        IRtmUser CreateNewUser(GetTokenResponseData.AuthenticationTokenData authTokenData);
+
+        IRtmUser LoadFromJson(string json);
     }
 }

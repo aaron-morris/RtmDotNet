@@ -20,9 +20,21 @@ using Newtonsoft.Json;
 
 namespace RtmDotNet.Http.Api
 {
-    public class RtmApiResponse<T>
+    public class ApiResponseData
     {
-        [JsonProperty("rsp")]
-        public T Content { get; set; }
+        [JsonProperty("stat")]
+        public string Status { get; set; }
+
+        [JsonProperty("err")]
+        public ErrorInfo Error { get; set; }
+
+        public class ErrorInfo
+        {
+            [JsonProperty("code")]
+            public string Code { get; set; }
+
+            [JsonProperty("msg")]
+            public string Message { get; set; }
+        }
     }
 }

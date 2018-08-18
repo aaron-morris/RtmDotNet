@@ -23,7 +23,7 @@ using RtmDotNet.Http.Api.Auth;
 
 namespace RtmDotNet.Users
 {
-    public class RtmUserFactory : IRtmUserFactory
+    public class UserFactory : IUserFactory
     {
         public IRtmUser CreateNewUser(GetTokenResponseData.AuthenticationTokenData authTokenData)
         {
