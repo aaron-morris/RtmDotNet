@@ -23,16 +23,16 @@ using RtmDotNet.Tasks;
 
 namespace RtmDotNet.Http.Api.Lists
 {
-    public class ListConverter : IListConverter
+    public class ResponseParser : IResponseParser
     {
         private readonly ITaskRepository _taskRepository;
 
-        public ListConverter(ITaskRepository taskRepository)
+        public ResponseParser(ITaskRepository taskRepository)
         {
             _taskRepository = taskRepository;
         }
 
-        public IList<IRtmList> ConvertToLists(GetListResponseData responseData)
+        public IList<IRtmList> GetLists(GetListResponseData responseData)
         {
             return responseData.Lists.Lists.Select(listData => new RtmList(_taskRepository)
                 {

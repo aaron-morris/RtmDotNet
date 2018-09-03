@@ -25,7 +25,7 @@ using RtmDotNet.Tasks;
 namespace RtmDotNet.UnitTests.Http.Api.Lists
 {
     [TestFixture]
-    public class ListConverterTests
+    public class ResponseParserTests
     {
         private const string ExpectedId = "123456";
         private const string ExpectedName = "My List";
@@ -41,8 +41,8 @@ namespace RtmDotNet.UnitTests.Http.Api.Lists
         public void ConvertToLists_ListData_InitsFromListData()
         {
             var fakeResponseData = GetFakeResponsesData();
-            var converter = GetItemUnderTest();
-            var actual = converter.ConvertToLists(fakeResponseData);
+            var responseParser = GetItemUnderTest();
+            var actual = responseParser.GetLists(fakeResponseData);
 
 
             // Verify
@@ -58,9 +58,9 @@ namespace RtmDotNet.UnitTests.Http.Api.Lists
             Assert.AreEqual(ExpectedFilter, actual[0].Filter);
         }
 
-        private IListConverter GetItemUnderTest()
+        private IResponseParser GetItemUnderTest()
         {
-            return new ListConverter(Substitute.For<ITaskRepository>());
+            return new ResponseParser(Substitute.For<ITaskRepository>());
         }
 
         private GetListResponseData GetFakeResponsesData()

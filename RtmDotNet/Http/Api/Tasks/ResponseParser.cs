@@ -17,26 +17,50 @@
 //     along with RtmDotNet.  If not, see <https://www.gnu.org/licenses/>.
 // -----------------------------------------------------------------------
 using System.Collections.Generic;
-using System.Linq;
 using RtmDotNet.Tasks;
 
 namespace RtmDotNet.Http.Api.Tasks
 {
-    public class TaskConverter : ITaskConverter
+    public class ResponseParser : IResponseParser
     {
-        public IList<IRtmTask> ConvertToTasks(GetListResponseData responseData)
+        public IList<IRtmTask> GetTasks(GetListResponseData responseData)
         {
-            var individualTasks = new List<IRtmTask>();
+            var tasks = new List<IRtmTask>();
+
+            if (responseData?.Lists?.Lists == null)
+            {
+                return new List<IRtmTask>();
+            }
 
             foreach (var list in responseData.Lists.Lists)
             {
                 foreach (var taskSeries in list.TaskSeries)
                 {
-                    individualTasks.AddRange(ConvertResponseDataToTasks(list.ListId, taskSeries));
+                    tasks.AddRange(ConvertResponseDataToTasks(list.ListId, taskSeries));
                 }
             }
 
-            return AssembleTaskTree(individualTasks);
+            return tasks;
+        }
+
+        public IList<IRtmTask> GetDeletedTasks(GetListResponseData responseData)
+        {
+            var deletedItems = new List<IRtmTask>();
+
+            if (responseData?.Lists?.Lists == null)
+            {
+                return new List<IRtmTask>();
+            }
+
+            foreach (var list in responseData.Lists.Lists)
+            {
+                foreach (var deletedItem in list.DeletedItems)
+                {
+                    deletedItems.AddRange(ConvertResponseDataToTasks(list.ListId, deletedItem.TaskSeries));
+                }
+            }
+
+            return deletedItems;
         }
 
         private IList<IRtmTask> ConvertResponseDataToTasks(string listId, GetListResponseData.TaskSeriesData taskSeriesData)
@@ -45,7 +69,7 @@ namespace RtmDotNet.Http.Api.Tasks
 
             foreach (var taskInstance in taskSeriesData.TaskInstances)
             {
-                var task = new RtmTask
+                var task = new RtmTask(taskInstance.Id)
                 {
                     Added = taskInstance.Added,
                     Completed = taskInstance.Completed,
@@ -55,7 +79,6 @@ namespace RtmDotNet.Http.Api.Tasks
                     Estimate = taskInstance.Estimate,
                     HasDueTime = taskInstance.HasDueTime,
                     HasStartTime = taskInstance.HasStartTime,
-                    Id = taskInstance.Id,
                     LocationId = taskSeriesData.LocationId,
                     Name = taskSeriesData.Name,
                     Modified = taskSeriesData.Modified,
@@ -88,36 +111,6 @@ namespace RtmDotNet.Http.Api.Tasks
             }
 
             return tasks;
-        }
-
-        private IList<IRtmTask> AssembleTaskTree(IList<IRtmTask> individualTasks)
-        {
-            var taskTree = new List<IRtmTask>();
-
-            foreach (var task in individualTasks)
-            {
-                if (string.IsNullOrEmpty(task.ParentTaskId))
-                {
-                    // This is a high-level task.
-                    taskTree.Add(task);
-                }
-                else
-                {
-                    var parentTask = individualTasks.FirstOrDefault(x => x.Id.Equals(task.ParentTaskId));
-                    if (parentTask != null)
-                    {
-                        // Add the subtask to its parent.
-                        parentTask.Subtasks.Add(task);
-                    }
-                    else
-                    {
-                        // This task's parent is not available
-                        taskTree.Add(task);
-                    }
-                }
-            }
-
-            return taskTree;
         }
     }
 }

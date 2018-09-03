@@ -23,14 +23,16 @@ namespace RtmDotNet.Tasks
 {
     public class RtmTask : IRtmTask
     {
-        public RtmTask()
+        public RtmTask(string id)
         {
+            Id = id;
+
             Tags = new List<string>();
             Notes = new List<ITaskNote>();
             Subtasks = new List<IRtmTask>();
         }
 
-        public string Id { get; set; }
+        public string Id { get; }
 
         public string Name { get; set; }
 
@@ -73,6 +75,31 @@ namespace RtmDotNet.Tasks
         public string Estimate { get; set; }
 
         public IList<IRtmTask> Subtasks { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is RtmTask task && Equals(task);
+        }
+
+        public bool Equals(IRtmTask other)
+        {
+            return other != null && string.Equals(Id, other.Id);
+        }
+
+        public int CompareTo(IRtmTask other)
+        {
+            if (other == null)
+            {
+                return 1;
+            }
+
+            return string.Compare(Id, other.Id, StringComparison.Ordinal);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id != null ? Id.GetHashCode() : 0;
+        }
 
         public class Note : ITaskNote
         {

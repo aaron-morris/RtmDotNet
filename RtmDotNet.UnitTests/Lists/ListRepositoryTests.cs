@@ -49,11 +49,11 @@ namespace RtmDotNet.UnitTests.Lists
             var fakeApiClient = Substitute.For<IApiClient>();
             fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
 
-            var fakeListConverter = Substitute.For<IListConverter>();
-            fakeListConverter.ConvertToLists(fakeResponseData).Returns(expectedLists);
+            var fakeResponseParser = Substitute.For<IResponseParser>();
+            fakeResponseParser.GetLists(fakeResponseData).Returns(expectedLists);
 
             // Execute
-            var listRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeListConverter, fakeAuthToken);
+            var listRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeResponseParser, fakeAuthToken);
             var actual = await listRepository.GetAllListsAsync().ConfigureAwait(false);
 
             // Verify
@@ -73,12 +73,12 @@ namespace RtmDotNet.UnitTests.Lists
 
         private ListRepository GetItemUnderTest(AuthenticationToken authToken)
         {
-            return GetItemUnderTest(Substitute.For<IListsUrlFactory>(), Substitute.For<IApiClient>(), Substitute.For<IListConverter>(), authToken);
+            return GetItemUnderTest(Substitute.For<IListsUrlFactory>(), Substitute.For<IApiClient>(), Substitute.For<IResponseParser>(), authToken);
         }
 
-        private ListRepository GetItemUnderTest(IListsUrlFactory urlFactory, IApiClient apiClient, IListConverter listConverter, AuthenticationToken authToken)
+        private ListRepository GetItemUnderTest(IListsUrlFactory urlFactory, IApiClient apiClient, IResponseParser responseParser, AuthenticationToken authToken)
         {
-            return new ListRepository(urlFactory, apiClient, listConverter, authToken);
+            return new ListRepository(urlFactory, apiClient, responseParser, authToken);
         }
     }
 }

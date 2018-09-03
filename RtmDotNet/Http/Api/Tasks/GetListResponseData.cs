@@ -38,13 +38,20 @@ namespace RtmDotNet.Http.Api.Tasks
             public TaskListData()
             {
                 TaskSeries = new List<TaskSeriesData>();
+                DeletedItems = new List<DeletedItem>();
             }
 
             [JsonProperty("id")]
             public string ListId { get; set; }
 
+            [JsonProperty("current")]
+            public DateTime? Current { get; set; }
+
             [JsonProperty("taskseries")]
             public IList<TaskSeriesData> TaskSeries { get; set; }
+
+            [JsonProperty("deleted")]
+            public IList<DeletedItem> DeletedItems { get; set; }
         }
 
         public class TaskSeriesData
@@ -145,6 +152,12 @@ namespace RtmDotNet.Http.Api.Tasks
             [JsonProperty("has_start_time")]
             [JsonConverter(typeof(RtmBooleanJsonConverter))]
             public bool HasStartTime { get; set; }
+        }
+
+        public class DeletedItem
+        {
+            [JsonProperty("taskseries")]
+            public TaskSeriesData TaskSeries { get; set; }
         }
     }
 }

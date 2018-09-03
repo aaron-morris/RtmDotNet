@@ -21,9 +21,9 @@ using System.Collections.Generic;
 
 namespace RtmDotNet.Tasks
 {
-    public interface IRtmTask
+    public interface IRtmTask : IEquatable<IRtmTask>, IComparable<IRtmTask>
     {
-        string Id { get; set; }
+        string Id { get; }
         string Name { get; set; }
         DateTime Created { get; set; }
         DateTime Modified { get; set; }

@@ -27,6 +27,8 @@ namespace RtmDotNet.Examples
 {
     public static class ListExamples
     {
+        private static readonly IListRepository ListRepository = InitListRepository();
+
         public static async Task Run()
         {
             while (true)
@@ -38,7 +40,7 @@ namespace RtmDotNet.Examples
                 Console.WriteLine("   1) Display All Lists");
                 Console.WriteLine("   2) Display All Tasks from a List");
                 Console.WriteLine();
-                Console.WriteLine("   0) Exit");
+                Console.WriteLine("   0) Back to Main");
                 Console.WriteLine();
                 Console.WriteLine("---------------------------------------------------------");
                 Console.WriteLine();
@@ -65,15 +67,19 @@ namespace RtmDotNet.Examples
             }
         }
 
-        private static async Task<IList<IRtmList>> DisplayAllLists()
+        private static IListRepository InitListRepository()
         {
             // Load a user from JSON
             var userJson = File.ReadAllText("myRtmUser.json");
             var user = Rtm.GetUserFactory().LoadFromJson(userJson);
 
+            return Rtm.GetListRepository(user.Token);
+        }
+
+        private static async Task<IList<IRtmList>> DisplayAllLists()
+        {
             // Download a list of all the user's lists in RTM.
-            var listRepository = Rtm.GetListRepository(user.Token);
-            var lists = await listRepository.GetAllListsAsync().ConfigureAwait(false);
+            var lists = await ListRepository.GetAllListsAsync().ConfigureAwait(false);
 
             WriteListsToConsole(lists);
 
@@ -106,7 +112,7 @@ namespace RtmDotNet.Examples
             Console.WriteLine("----------------------");
             foreach (var task in sortedTasks)
             {
-                Console.WriteLine(task.Name);
+                TasksExamples.WriteTask(task, 0);
             }
         }
 

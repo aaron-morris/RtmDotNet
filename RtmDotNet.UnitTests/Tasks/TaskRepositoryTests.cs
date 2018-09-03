@@ -16,249 +16,252 @@
 //     You should have received a copy of the GNU General Public License
 //     along with RtmDotNet.  If not, see <https://www.gnu.org/licenses/>.
 // -----------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NSubstitute;
-using NUnit.Framework;
-using RtmDotNet.Auth;
-using RtmDotNet.Http.Api;
 using RtmDotNet.Http.Api.Tasks;
 using RtmDotNet.Tasks;
 
 namespace RtmDotNet.UnitTests.Tasks
 {
+    using NUnit.Framework;
+
     [TestFixture]
     public class TaskRepositoryTests
     {
         [Test]
-        public async Task GetAllTasksAsync_DefaultOperation_IncludesIncompleteFilter()
+        public async Task GetAllTasksAsync_DefaultOperation_ExcludesCompleted()
         {
             // Setup
-            var expectedTasks = new List<IRtmTask> { new RtmTask { Name = "My Fake Task" } };
-
-            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = PermissionLevel.Read };
-            const string fakeListsUrl = "My Fake URL";
-
-            var fakeUrlFactory = Substitute.For<ITasksUrlFactory>();
-            fakeUrlFactory.CreateGetListsUrl(fakeAuthToken.Id, filter: "status:incomplete").Returns(fakeListsUrl);
-
             var fakeResponseData = new GetListResponseData();
-            var fakeApiClient = Substitute.For<IApiClient>();
-            fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
+            var fakeTaskClient = Substitute.For<ITaskApiClient>();
+            fakeTaskClient.GetAllTasksAsync().Returns(Task.FromResult(fakeResponseData));
 
-            var fakeTaskConverter = Substitute.For<ITaskConverter>();
-            fakeTaskConverter.ConvertToTasks(fakeResponseData).Returns(expectedTasks);
+            var fakeTaskList = new List<IRtmTask>();
+            var fakeResponseParser = Substitute.For<IResponseParser>();
+            fakeResponseParser.GetTasks(fakeResponseData).Returns(fakeTaskList);
+
+            IList<IRtmTask> expectedTaskList = new List<IRtmTask>();
+            var mockTaskCache = Substitute.For<ITaskCache>();
+            mockTaskCache.GetAllAsync().Returns(Task.FromResult(expectedTaskList));
 
             // Execute
-            var taskRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeAuthToken, fakeTaskConverter);
+            var taskRepository = GetItemUnderTest(fakeTaskClient, fakeResponseParser, mockTaskCache);
             var actual = await taskRepository.GetAllTasksAsync().ConfigureAwait(false);
 
             // Verify
-            Assert.AreSame(expectedTasks, actual);
+            Assert.AreSame(expectedTaskList, actual);
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            mockTaskCache.Received().ClearAsync();
+            mockTaskCache.Received().AddOrReplaceAsync(fakeTaskList);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
         [Test]
-        public async Task GetAllTasksAsync_ExplicitExcludeOption_IncludesIncompleteFilter()
+        public async Task GetAllTasksAsync_ExplicitExcludeOption_ExcludesCompleted()
         {
             // Setup
-            var expectedTasks = new List<IRtmTask> { new RtmTask { Name = "My Fake Task" } };
-
-            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = PermissionLevel.Read };
-            const string fakeListsUrl = "My Fake URL";
-
-            var fakeUrlFactory = Substitute.For<ITasksUrlFactory>();
-            fakeUrlFactory.CreateGetListsUrl(fakeAuthToken.Id, filter: "status:incomplete").Returns(fakeListsUrl);
-
             var fakeResponseData = new GetListResponseData();
-            var fakeApiClient = Substitute.For<IApiClient>();
-            fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
+            var fakeTaskClient = Substitute.For<ITaskApiClient>();
+            fakeTaskClient.GetAllTasksAsync().Returns(Task.FromResult(fakeResponseData));
 
-            var fakeTaskConverter = Substitute.For<ITaskConverter>();
-            fakeTaskConverter.ConvertToTasks(fakeResponseData).Returns(expectedTasks);
+            var fakeTaskList = new List<IRtmTask>();
+            var fakeResponseParser = Substitute.For<IResponseParser>();
+            fakeResponseParser.GetTasks(fakeResponseData).Returns(fakeTaskList);
+
+            IList<IRtmTask> expectedTaskList = new List<IRtmTask>();
+            var mockTaskCache = Substitute.For<ITaskCache>();
+            mockTaskCache.GetAllAsync().Returns(Task.FromResult(expectedTaskList));
 
             // Execute
-            var taskRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeAuthToken, fakeTaskConverter);
+            var taskRepository = GetItemUnderTest(fakeTaskClient, fakeResponseParser, mockTaskCache);
             // ReSharper disable once RedundantArgumentDefaultValue
             var actual = await taskRepository.GetAllTasksAsync(false).ConfigureAwait(false);
 
             // Verify
-            Assert.AreSame(expectedTasks, actual);
+            Assert.AreSame(expectedTaskList, actual);
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            mockTaskCache.Received().ClearAsync();
+            mockTaskCache.Received().AddOrReplaceAsync(fakeTaskList);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
         [Test]
-        public async Task GetAllTasksAsync_IncludeCompletedTasks_ExcludesIncompleteFilter()
+        public async Task GetAllTasksAsync_ExplicitIncludeOption_IncludesCompleted()
         {
             // Setup
-            var expectedTasks = new List<IRtmTask> { new RtmTask { Name = "My Fake Task" } };
-
-            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = PermissionLevel.Read };
-            const string fakeListsUrl = "My Fake URL";
-
-            var fakeUrlFactory = Substitute.For<ITasksUrlFactory>();
-            fakeUrlFactory.CreateGetListsUrl(fakeAuthToken.Id).Returns(fakeListsUrl);
-
             var fakeResponseData = new GetListResponseData();
-            var fakeApiClient = Substitute.For<IApiClient>();
-            fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
+            var fakeTaskClient = Substitute.For<ITaskApiClient>();
+            fakeTaskClient.GetAllTasksAsync(true).Returns(Task.FromResult(fakeResponseData));
 
-            var fakeTaskConverter = Substitute.For<ITaskConverter>();
-            fakeTaskConverter.ConvertToTasks(fakeResponseData).Returns(expectedTasks);
+            var fakeTaskList = new List<IRtmTask>();
+            var fakeResponseParser = Substitute.For<IResponseParser>();
+            fakeResponseParser.GetTasks(fakeResponseData).Returns(fakeTaskList);
+
+            IList<IRtmTask> expectedTaskList = new List<IRtmTask>();
+            var mockTaskCache = Substitute.For<ITaskCache>();
+            mockTaskCache.GetAllAsync().Returns(Task.FromResult(expectedTaskList));
 
             // Execute
-            var taskRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeAuthToken, fakeTaskConverter);
+            var taskRepository = GetItemUnderTest(fakeTaskClient, fakeResponseParser, mockTaskCache);
             var actual = await taskRepository.GetAllTasksAsync(true).ConfigureAwait(false);
 
             // Verify
-            Assert.AreSame(expectedTasks, actual);
+            Assert.AreSame(expectedTaskList, actual);
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            mockTaskCache.Received().ClearAsync();
+            mockTaskCache.Received().AddOrReplaceAsync(fakeTaskList);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
-        [TestCase(PermissionLevel.Read)]
-        [TestCase(PermissionLevel.Write)]
-        [TestCase(PermissionLevel.Delete)]
-        public async Task GetAllTasksAsync_SufficientPermissions_NoPermissionException(PermissionLevel permissionLevel)
+        [Test]
+        public async Task GetTasksByListIdAsync_ListNotSyncedYet_GetsAllTasksForList()
         {
             // Setup
-            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = permissionLevel };
+            const string listId = "My Fake List ID";
+
+            var fakeSyncTracker = Substitute.For<ISyncTracker>();
+            fakeSyncTracker.GetLastSync(listId).Returns((DateTime?)null);
+
+            var fakeResponseData = new GetListResponseData();
+            var fakeApiClient = Substitute.For<ITaskApiClient>();
+            fakeApiClient.GetTasksByListIdAsync(listId).Returns(Task.FromResult(fakeResponseData));
+
+            var fakeTaskList = new List<IRtmTask>();
+            var fakeDeletedTaskList = new List<IRtmTask>();
+            var fakeResponseParser = Substitute.For<IResponseParser>();
+            fakeResponseParser.GetTasks(fakeResponseData).Returns(fakeTaskList);
+            fakeResponseParser.GetDeletedTasks(fakeResponseData).Returns(fakeDeletedTaskList);
+
+            IList<IRtmTask> expectedTaskList = new List<IRtmTask>();
+            var mockTaskCache = Substitute.For<ITaskCache>();
+            mockTaskCache.GetAllAsync(listId).Returns(Task.FromResult(expectedTaskList));
             
             // Execute
-            var taskRepository = GetItemUnderTest(fakeAuthToken);
-            await taskRepository.GetAllTasksAsync().ConfigureAwait(false);
+            var taskRepository = GetItemUnderTest(fakeApiClient, fakeResponseParser, mockTaskCache, fakeSyncTracker);
+            var actual = await taskRepository.GetTasksByListIdAsync(listId).ConfigureAwait(false);
 
             // Verify
-            Assert.Pass("No permission exception was thrown.");
+            Assert.AreSame(expectedTaskList, actual);
+#pragma warning disable 4014
+            mockTaskCache.DidNotReceive().ClearAsync();
+            mockTaskCache.Received(1).AddOrReplaceAsync(listId, fakeTaskList, true);
+            mockTaskCache.DidNotReceive().RemoveAsync(fakeDeletedTaskList);
+#pragma warning restore 4014
         }
 
         [Test]
-        public void GetAllTasksAsync_InsufficientPermissions_ThrowsInvalidOperationError()
+        public async Task GetTasksByListIdAsync_ListAlreadySynced_IgnoresLastSyncDate()
         {
             // Setup
-            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = PermissionLevel.Undefined };
+            const string listId = "My Fake List ID";
+            var lastSync = DateTime.Parse("2018-01-23 12:34:56");
 
-            // Execute
-            var taskRepository = GetItemUnderTest(fakeAuthToken);
-            Assert.ThrowsAsync<InvalidOperationException>(() => taskRepository.GetAllTasksAsync());
-        }
-        
-        [Test]
-        public async Task GetTasksByListIdAsync_DefaultOperation_IncludesIncompleteFilter()
-        {
-            // Setup
-            var expectedTasks = new List<IRtmTask> { new RtmTask { Name = "My Fake Task" } };
-            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = PermissionLevel.Read };
-            const string fakeListsUrl = "My Fake URL";
-
-            var fakeListId = "My Fake List ID";
-            var fakeUrlFactory = Substitute.For<ITasksUrlFactory>();
-            fakeUrlFactory.CreateGetListsUrl(fakeAuthToken.Id, listId:fakeListId, filter: "status:incomplete").Returns(fakeListsUrl);
+            var fakeSyncTracker = Substitute.For<ISyncTracker>();
+            fakeSyncTracker.GetLastSync(listId).Returns(lastSync);
 
             var fakeResponseData = new GetListResponseData();
-            var fakeApiClient = Substitute.For<IApiClient>();
-            fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
+            var fakeApiClient = Substitute.For<ITaskApiClient>();
+            fakeApiClient.GetTasksByListIdAsync(listId).Returns(Task.FromResult(fakeResponseData));
 
-            var fakeTaskConverter = Substitute.For<ITaskConverter>();
-            fakeTaskConverter.ConvertToTasks(fakeResponseData).Returns(expectedTasks);
+            var fakeTaskList = new List<IRtmTask>();
+            var fakeDeletedTaskList = new List<IRtmTask>();
+            var fakeResponseParser = Substitute.For<IResponseParser>();
+            fakeResponseParser.GetTasks(fakeResponseData).Returns(fakeTaskList);
+            fakeResponseParser.GetDeletedTasks(fakeResponseData).Returns(fakeDeletedTaskList);
+
+            IList<IRtmTask> expectedTaskList = new List<IRtmTask>();
+            var mockTaskCache = Substitute.For<ITaskCache>();
+            mockTaskCache.GetAllAsync(listId).Returns(Task.FromResult(expectedTaskList));
 
             // Execute
-            var taskRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeAuthToken, fakeTaskConverter);
-            var actual = await taskRepository.GetTasksByListIdAsync(fakeListId).ConfigureAwait(false);
+            var taskRepository = GetItemUnderTest(fakeApiClient, fakeResponseParser, mockTaskCache, fakeSyncTracker);
+            var actual = await taskRepository.GetTasksByListIdAsync(listId).ConfigureAwait(false);
 
             // Verify
-            Assert.AreSame(expectedTasks, actual);
+            Assert.AreSame(expectedTaskList, actual);
+#pragma warning disable 4014
+            mockTaskCache.DidNotReceive().ClearAsync();
+            mockTaskCache.Received(1).AddOrReplaceAsync(listId, fakeTaskList, true);
+            mockTaskCache.DidNotReceive().RemoveAsync(fakeDeletedTaskList);
+#pragma warning restore 4014
         }
 
         [Test]
-        public async Task GetTasksByListIdAsync_ExplicitExcludeOption_IncludesIncompleteFilter()
+        public async Task GetTasksByListIdAsync_HasTasksFromOtherLists_GetsOtherListsTooUsingLastSync()
         {
             // Setup
-            var expectedTasks = new List<IRtmTask> { new RtmTask { Name = "My Fake Task" } };
+            const string masterListId = "My Master List ID";
+            const string firstForeignListId = "First Foreign List ID";
+            const string secondForeignListId = "Second Foreign List ID";
 
-            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = PermissionLevel.Read };
-            const string fakeListsUrl = "My Fake URL";
+            var masterLastSync = DateTime.Parse("2018-01-23 12:34:56");
+            var firstForeignLastSync = masterLastSync.Subtract(TimeSpan.FromSeconds(1));
+            var secondForeignLastSync = masterLastSync.Add(TimeSpan.FromSeconds(1));
 
-            var fakeListId = "My Fake List ID";
-            var fakeUrlFactory = Substitute.For<ITasksUrlFactory>();
-            fakeUrlFactory.CreateGetListsUrl(fakeAuthToken.Id, listId: fakeListId, filter: "status:incomplete").Returns(fakeListsUrl);
+            var testSyncTracker = new InMemorySyncTracker();
+            testSyncTracker.SetLastSync(masterListId, masterLastSync);
+            testSyncTracker.SetLastSync(firstForeignListId, firstForeignLastSync);
+            testSyncTracker.SetLastSync(secondForeignListId, secondForeignLastSync);
 
-            var fakeResponseData = new GetListResponseData();
-            var fakeApiClient = Substitute.For<IApiClient>();
-            fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
+            var masterResponseData = new GetListResponseData();
+            var firstForeignResponseData = new GetListResponseData();
+            var secondForeignResponseData = new GetListResponseData();
+            var fakeApiClient = Substitute.For<ITaskApiClient>();
+            fakeApiClient.GetTasksByListIdAsync(masterListId).Returns(Task.FromResult(masterResponseData));
+            fakeApiClient.GetTasksByListIdAsync(firstForeignListId, firstForeignLastSync).Returns(Task.FromResult(firstForeignResponseData));
+            fakeApiClient.GetTasksByListIdAsync(secondForeignListId, secondForeignLastSync).Returns(Task.FromResult(secondForeignResponseData));
 
-            var fakeTaskConverter = Substitute.For<ITaskConverter>();
-            fakeTaskConverter.ConvertToTasks(fakeResponseData).Returns(expectedTasks);
+            var firstTask = Substitute.For<IRtmTask>();
+            firstTask.ListId.Returns(firstForeignListId);
+            var secondTask = Substitute.For<IRtmTask>();
+            secondTask.ListId.Returns(secondForeignListId);
+
+            var masterTaskList = new List<IRtmTask> { firstTask, secondTask};
+            var firstForeignTaskList = new List<IRtmTask> { firstTask, secondTask };
+            var secondForeignTaskList = new List<IRtmTask> { firstTask, secondTask };
+            var masterDeletedTaskList = new List<IRtmTask>();
+            var firstForeignDeletedTaskList = new List<IRtmTask>();
+            var secondForeignDeletedTaskList = new List<IRtmTask>();
+            var fakeResponseParser = Substitute.For<IResponseParser>();
+            fakeResponseParser.GetTasks(masterResponseData).Returns(masterTaskList);
+            fakeResponseParser.GetDeletedTasks(masterResponseData).Returns(masterDeletedTaskList);
+            fakeResponseParser.GetTasks(firstForeignResponseData).Returns(firstForeignTaskList);
+            fakeResponseParser.GetDeletedTasks(firstForeignResponseData).Returns(firstForeignDeletedTaskList);
+            fakeResponseParser.GetTasks(secondForeignResponseData).Returns(secondForeignTaskList);
+            fakeResponseParser.GetDeletedTasks(secondForeignResponseData).Returns(secondForeignDeletedTaskList);
+
+            IList<IRtmTask> expectedTaskList = new List<IRtmTask>();
+            var mockTaskCache = Substitute.For<ITaskCache>();
+            mockTaskCache.GetAllAsync(masterListId).Returns(Task.FromResult(expectedTaskList));
 
             // Execute
-            var taskRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeAuthToken, fakeTaskConverter);
-            // ReSharper disable once RedundantArgumentDefaultValue
-            var actual = await taskRepository.GetTasksByListIdAsync(fakeListId, false).ConfigureAwait(false);
+            var taskRepository = GetItemUnderTest(fakeApiClient, fakeResponseParser, mockTaskCache, testSyncTracker);
+            var actual = await taskRepository.GetTasksByListIdAsync(masterListId).ConfigureAwait(false);
 
             // Verify
-            Assert.AreSame(expectedTasks, actual);
+            Assert.AreSame(expectedTaskList, actual);
+#pragma warning disable 4014
+            mockTaskCache.DidNotReceive().ClearAsync();
+            mockTaskCache.Received(1).AddOrReplaceAsync(masterListId, masterTaskList, true);
+            mockTaskCache.DidNotReceive().RemoveAsync(masterDeletedTaskList);
+            mockTaskCache.Received(1).AddOrReplaceAsync(firstForeignListId, firstForeignTaskList);
+            mockTaskCache.Received(1).RemoveAsync(firstForeignDeletedTaskList);
+            mockTaskCache.Received(1).AddOrReplaceAsync(secondForeignListId, secondForeignTaskList);
+            mockTaskCache.Received(1).RemoveAsync(secondForeignDeletedTaskList);
+#pragma warning restore 4014
         }
 
-        [Test]
-        public async Task GetTasksByListIdAsync_IncludeCompletedTasks_ExcludesIncompleteFilter()
+        private TaskRepository GetItemUnderTest(ITaskApiClient taskApiClient, IResponseParser responseParser, ITaskCache taskCache)
         {
-            // Setup
-            var expectedTasks = new List<IRtmTask> { new RtmTask { Name = "My Fake Task" } };
-
-            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = PermissionLevel.Read };
-            const string fakeListsUrl = "My Fake URL";
-
-            var fakeListId = "My Fake List ID";
-            var fakeUrlFactory = Substitute.For<ITasksUrlFactory>();
-            fakeUrlFactory.CreateGetListsUrl(fakeAuthToken.Id, listId: fakeListId).Returns(fakeListsUrl);
-
-            var fakeResponseData = new GetListResponseData();
-            var fakeApiClient = Substitute.For<IApiClient>();
-            fakeApiClient.GetAsync<GetListResponseData>(fakeListsUrl).Returns(Task.FromResult(fakeResponseData));
-
-            var fakeTaskConverter = Substitute.For<ITaskConverter>();
-            fakeTaskConverter.ConvertToTasks(fakeResponseData).Returns(expectedTasks);
-
-            // Execute
-            var taskRepository = GetItemUnderTest(fakeUrlFactory, fakeApiClient, fakeAuthToken, fakeTaskConverter);
-            var actual = await taskRepository.GetTasksByListIdAsync(fakeListId, true).ConfigureAwait(false);
-
-            // Verify
-            Assert.AreSame(expectedTasks, actual);
+            return GetItemUnderTest(taskApiClient, responseParser, taskCache, Substitute.For<ISyncTracker>());
         }
 
-        [TestCase(PermissionLevel.Read)]
-        [TestCase(PermissionLevel.Write)]
-        [TestCase(PermissionLevel.Delete)]
-        public async Task GetTasksByListIdAsync_SufficientPermissions_NoPermissionException(PermissionLevel permissionLevel)
+        private TaskRepository GetItemUnderTest(ITaskApiClient taskApiClient, IResponseParser responseParser, ITaskCache taskCache, ISyncTracker syncTracker)
         {
-            // Setup
-            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = permissionLevel };
-
-            // Execute
-            var taskRepository = GetItemUnderTest(fakeAuthToken);
-            await taskRepository.GetTasksByListIdAsync("Fake List ID").ConfigureAwait(false);
-
-            // Verify
-            Assert.Pass("No permission exception was thrown.");
-        }
-
-        [Test]
-        public void GetTasksByListIdAsync_InsufficientPermissions_ThrowsInvalidOperationError()
-        {
-            // Setup
-            var fakeAuthToken = new AuthenticationToken { Id = "My Fake Token ID", Permissions = PermissionLevel.Undefined };
-
-            // Execute
-            var taskRepository = GetItemUnderTest(fakeAuthToken);
-            Assert.ThrowsAsync<InvalidOperationException>(() => taskRepository.GetTasksByListIdAsync("Fake List ID"));
-        }
-
-        private TaskRepository GetItemUnderTest(AuthenticationToken authToken)
-        {
-            return GetItemUnderTest(Substitute.For<ITasksUrlFactory>(), Substitute.For<IApiClient>(), authToken, Substitute.For<ITaskConverter>());
-        }
-
-        private TaskRepository GetItemUnderTest(ITasksUrlFactory urlFactory, IApiClient apiClient, AuthenticationToken authToken, ITaskConverter taskConverter)
-        {
-            return new TaskRepository(urlFactory, apiClient, authToken, taskConverter);
+            return new TaskRepository(taskApiClient, responseParser, taskCache, syncTracker);
         }
     }
 }

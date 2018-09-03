@@ -19,54 +19,80 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using RtmDotNet.Auth;
-using RtmDotNet.Http.Api;
 using RtmDotNet.Http.Api.Tasks;
 
 namespace RtmDotNet.Tasks
 {
     public class TaskRepository : ITaskRepository
     {
-        private readonly ITasksUrlFactory _urlFactory;
+        private readonly ITaskApiClient _taskApiClient;
 
-        private readonly IApiClient _apiClient;
+        private readonly IResponseParser _responseParser;
 
-        private readonly AuthenticationToken _authToken;
+        private readonly ITaskCache _taskCache;
 
-        private readonly ITaskConverter _taskConverter;
+        private readonly ISyncTracker _syncTracker;
 
-        public TaskRepository(ITasksUrlFactory urlFactory, IApiClient apiClient, AuthenticationToken authToken, ITaskConverter taskConverter)
+        public TaskRepository(ITaskApiClient taskApiClient, IResponseParser responseParser, ITaskCache taskCache, ISyncTracker syncTracker)
         {
-            _urlFactory = urlFactory;
-            _apiClient = apiClient;
-            _authToken = authToken;
-            _taskConverter = taskConverter;
+            _taskApiClient = taskApiClient;
+            _responseParser = responseParser;
+            _taskCache = taskCache;
+            _syncTracker = syncTracker;
         }
 
         public async Task<IList<IRtmTask>> GetAllTasksAsync(bool includeCompletedTasks = false)
         {
-            if (_authToken.Permissions < PermissionLevel.Read)
-            {
-                throw new InvalidOperationException("This operation requires READ permissions of the RTM API.");
-            }
+            var response = await _taskApiClient.GetAllTasksAsync(includeCompletedTasks).ConfigureAwait(false);
+            var tasks = _responseParser.GetTasks(response);
 
-            var taskStatusFilter = includeCompletedTasks ? string.Empty : "status:incomplete";
-            var url = _urlFactory.CreateGetListsUrl(_authToken.Id, filter:taskStatusFilter);
-            var response = await _apiClient.GetAsync<GetListResponseData>(url).ConfigureAwait(false);
-            return _taskConverter.ConvertToTasks(response);
+            // Because we just retrieved a full, up-to-date list of tasks, clear the internal cache before processing the new list.
+            await _taskCache.ClearAsync().ConfigureAwait(false);
+
+            await _taskCache.AddOrReplaceAsync(tasks).ConfigureAwait(false);
+            return await _taskCache.GetAllAsync().ConfigureAwait(false);
         }
 
         public async Task<IList<IRtmTask>> GetTasksByListIdAsync(string listId, bool includeCompletedTasks = false)
         {
-            if (_authToken.Permissions < PermissionLevel.Read)
+            var currentSync = DateTime.Now;
+            await UpdateTaskCacheForListId(listId, null, currentSync, includeCompletedTasks).ConfigureAwait(false);
+            return await _taskCache.GetAllAsync(listId).ConfigureAwait(false);
+        }
+
+        private async Task UpdateTaskCacheForListId(string listId, DateTime? lastSync, DateTime currentSync, bool includeCompletedTasks)
+        {
+            var response = await _taskApiClient.GetTasksByListIdAsync(listId, lastSync, includeCompletedTasks).ConfigureAwait(false);
+
+            var tasks = _responseParser.GetTasks(response);
+            
+            if (lastSync != null)
             {
-                throw new InvalidOperationException("This operation requires READ permissions of the RTM API.");
+                await _taskCache.AddOrReplaceAsync(listId, tasks).ConfigureAwait(false);
+
+                var deletedTasks = _responseParser.GetDeletedTasks(response);
+                await _taskCache.RemoveAsync(deletedTasks).ConfigureAwait(false); 
+            }
+            else
+            {
+                await _taskCache.AddOrReplaceAsync(listId, tasks, true).ConfigureAwait(false);
             }
 
-            var taskStatusFilter = includeCompletedTasks ? string.Empty : "status:incomplete";
-            var url = _urlFactory.CreateGetListsUrl(_authToken.Id, listId: listId, filter: taskStatusFilter);
-            var response = await _apiClient.GetAsync<GetListResponseData>(url).ConfigureAwait(false);
-            return _taskConverter.ConvertToTasks(response);
+            _syncTracker.SetLastSync(listId, currentSync);
+
+            foreach (var task in tasks)
+            {
+                if (!task.ListId.Equals(listId))
+                {
+                    // The current list is not this task's master list.  We'll need to ensure that the master list is also synchronized so that we have
+                    // all subtask information.
+                    var masterListLastSync = _syncTracker.GetLastSync(task.ListId);
+                    if (masterListLastSync == null || masterListLastSync.Value < currentSync)
+                    {
+                        await UpdateTaskCacheForListId(task.ListId, masterListLastSync, currentSync, includeCompletedTasks).ConfigureAwait(false);
+                    }
+                }
+            }
         }
     }
 }

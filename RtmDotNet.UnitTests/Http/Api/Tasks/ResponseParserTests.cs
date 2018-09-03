@@ -18,14 +18,13 @@
 // -----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 using RtmDotNet.Http.Api.Tasks;
 
 namespace RtmDotNet.UnitTests.Http.Api.Tasks
 {
     [TestFixture]
-    public class TaskConverterTests
+    public class ResponseParserTests
     {
         private const string ExpectedEstimate = "Fake Estimate";
         private const bool ExpectedHasDueTime = true;
@@ -56,11 +55,11 @@ namespace RtmDotNet.UnitTests.Http.Api.Tasks
         private readonly DateTime _expectedNoteModified = DateTime.Parse("2018-07-01T08:30:24");
 
         [Test]
-        public void ConvertToTasks_TaskData_InitsFromTaskData()
+        public void GetTasks_TaskData_InitsFromTaskData()
         {
             var fakeResponseData = GetFakeResponsesData();
-            var converter = GetItemUnderTest();
-            var actual = converter.ConvertToTasks(fakeResponseData);
+            var responseParser = GetItemUnderTest();
+            var actual = responseParser.GetTasks(fakeResponseData);
 
 
             // Verify
@@ -96,57 +95,91 @@ namespace RtmDotNet.UnitTests.Http.Api.Tasks
         }
 
         [Test]
-        public void ConvertToTasks_TasksWithSubtasks_AssemblesIntoTree()
+        public void GetTasks_NullData_InitsEmptyList()
         {
-            // Setup
-            var fakeResponseData = GetFakeResponsesData();
+            var responseParser = GetItemUnderTest();
+            var actual = responseParser.GetTasks(null);
 
-            var fakeParentTask = GetFakeTaskSeriesData();
-            fakeParentTask.TaskInstances[0].Id = "Task With Children";
-            fakeParentTask.ParentTaskId = string.Empty;
-            fakeResponseData.Lists.Lists[0].TaskSeries.Add(fakeParentTask);
-
-            var fakeChildWithSubChildren = GetFakeTaskSeriesData();
-            fakeChildWithSubChildren.TaskInstances[0].Id = "Subtask With Children";
-            fakeChildWithSubChildren.ParentTaskId = "Task With Children";
-            fakeResponseData.Lists.Lists[0].TaskSeries.Add(fakeChildWithSubChildren);
-
-            var fakeChildWithoutSubChildren = GetFakeTaskSeriesData();
-            fakeChildWithoutSubChildren.TaskInstances[0].Id = "Subtask Without Children";
-            fakeChildWithoutSubChildren.ParentTaskId = "Task With Children";
-            fakeResponseData.Lists.Lists[0].TaskSeries.Add(fakeChildWithoutSubChildren);
-
-            var fakeGrandChild = GetFakeTaskSeriesData();
-            fakeGrandChild.TaskInstances[0].Id = "Subtask of Subtask";
-            fakeGrandChild.ParentTaskId = "Subtask With Children";
-            fakeResponseData.Lists.Lists[0].TaskSeries.Add(fakeGrandChild);
-
-            // Execute
-            var converter = GetItemUnderTest();
-            var actual = converter.ConvertToTasks(fakeResponseData);
-
-            // Verify
-            Assert.AreEqual(2, actual.Count); // The list should have the default task created by the GetFakeResponseData method, plus our parent task above.
-
-            var defaultTask = actual.Single(task => task.Id.Equals(ExpectedId));
-            Assert.IsFalse(defaultTask.Subtasks.Any()); // The default test task should not have any subtasks.
-
-            var parentTask = actual.Single(task => task.Id.Equals("Task With Children"));
-            Assert.AreEqual(2, parentTask.Subtasks.Count);
-
-            var subTaskWithChildren = parentTask.Subtasks.Single(task => task.Id.Equals("Subtask With Children"));
-            Assert.AreEqual(1, subTaskWithChildren.Subtasks.Count);
-
-            var grandchild = subTaskWithChildren.Subtasks.Single(task => task.Id.Equals("Subtask of Subtask"));
-            Assert.IsFalse(grandchild.Subtasks.Any());
-
-            var subTaskWithoutChildren = parentTask.Subtasks.Single(task => task.Id.Equals("Subtask Without Children"));
-            Assert.IsFalse(subTaskWithoutChildren.Subtasks.Any());
+            Assert.AreEqual(0, actual.Count);
         }
 
-        private ITaskConverter GetItemUnderTest()
+        [Test]
+        public void GetTasks_NullListOfListsElement_InitsEmptyList()
         {
-            return new TaskConverter();
+            var fakeResponseData = new GetListResponseData { Lists = null };
+            var responseParser = GetItemUnderTest();
+            var actual = responseParser.GetTasks(fakeResponseData);
+
+            Assert.AreEqual(0, actual.Count);
+        }
+
+        [Test]
+        public void GetTasks_NullListsElement_InitsEmptyList()
+        {
+            var fakeResponseData = new GetListResponseData
+            {
+                Lists = new GetListResponseData.ListOfLists
+                {
+                    Lists = null
+                }
+            };
+            var responseParser = GetItemUnderTest();
+            var actual = responseParser.GetTasks(fakeResponseData);
+
+            Assert.AreEqual(0, actual.Count);
+        }
+
+        [Test]
+        public void GetDeletedTasks_TaskData_InitsFromTaskData()
+        {
+            var fakeResponseData = GetFakeDeletedTasksResponsesData();
+            var responseParser = GetItemUnderTest();
+            var actual = responseParser.GetDeletedTasks(fakeResponseData);
+
+            Assert.AreEqual(1, actual.Count);
+            Assert.AreEqual(ExpectedListId, actual[0].ListId);
+            Assert.AreEqual(ExpectedSeriesId, actual[0].SeriesId);
+            Assert.AreEqual(ExpectedId, actual[0].Id);
+        }
+
+        [Test]
+        public void GetDeletedTasks_NullData_InitsEmptyList()
+        {
+            var responseParser = GetItemUnderTest();
+            var actual = responseParser.GetDeletedTasks(null);
+
+            Assert.AreEqual(0, actual.Count);
+        }
+
+        [Test]
+        public void GetDeletedTasks_NullListOfListsElement_InitsEmptyList()
+        {
+            var fakeResponseData = new GetListResponseData {Lists = null};
+            var responseParser = GetItemUnderTest();
+            var actual = responseParser.GetDeletedTasks(fakeResponseData);
+
+            Assert.AreEqual(0, actual.Count);
+        }
+
+        [Test]
+        public void GetDeletedTasks_NullListsElement_InitsEmptyList()
+        {
+            var fakeResponseData = new GetListResponseData
+            {
+                Lists = new GetListResponseData.ListOfLists
+                {
+                    Lists = null
+                }
+            };
+            var responseParser = GetItemUnderTest();
+            var actual = responseParser.GetDeletedTasks(fakeResponseData);
+
+            Assert.AreEqual(0, actual.Count);
+        }
+
+        private IResponseParser GetItemUnderTest()
+        {
+            return new ResponseParser();
         }
 
         private GetListResponseData GetFakeResponsesData()
@@ -163,6 +196,30 @@ namespace RtmDotNet.UnitTests.Http.Api.Tasks
                             TaskSeries = new List<GetListResponseData.TaskSeriesData>
                             {
                                 GetFakeTaskSeriesData()
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        private GetListResponseData GetFakeDeletedTasksResponsesData()
+        {
+            return new GetListResponseData
+            {
+                Lists = new GetListResponseData.ListOfLists
+                {
+                    Lists = new List<GetListResponseData.TaskListData>
+                    {
+                        new GetListResponseData.TaskListData
+                        {
+                            ListId = ExpectedListId,
+                            DeletedItems = new List<GetListResponseData.DeletedItem>
+                            {
+                                new GetListResponseData.DeletedItem
+                                {
+                                    TaskSeries = GetFakeTaskSeriesData()
+                                }
                             }
                         }
                     }

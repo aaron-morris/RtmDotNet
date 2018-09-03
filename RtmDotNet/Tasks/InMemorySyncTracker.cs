@@ -16,13 +16,34 @@
 //     You should have received a copy of the GNU General Public License
 //     along with RtmDotNet.  If not, see <https://www.gnu.org/licenses/>.
 // -----------------------------------------------------------------------
-using System.Collections.Generic;
-using RtmDotNet.Tasks;
 
-namespace RtmDotNet.Http.Api.Tasks
+using System;
+using System.Collections.Concurrent;
+
+namespace RtmDotNet.Tasks
 {
-    public interface ITaskConverter
+    public class InMemorySyncTracker : ISyncTracker
     {
-        IList<IRtmTask> ConvertToTasks(GetListResponseData responseData);
+        private readonly ConcurrentDictionary<string, DateTime> _syncTimes;
+
+        public InMemorySyncTracker()
+        {
+            _syncTimes = new ConcurrentDictionary<string, DateTime>();
+        }
+
+        public void SetLastSync(string listId, DateTime lastSync)
+        {
+            _syncTimes[listId] = lastSync;
+        }
+
+        public DateTime? GetLastSync(string listId)
+        {
+            if (listId == null || !_syncTimes.ContainsKey(listId))
+            {
+                return null;
+            }
+
+            return _syncTimes[listId];
+        }
     }
 }

@@ -65,6 +65,23 @@ namespace RtmDotNet.Examples
             }
         }
 
+        public static void WriteTask(IRtmTask task, int indentLevel)
+        {
+            if (task.HasDueTime)
+            {
+                Console.WriteLine($"{new string('\t', indentLevel)} {task.Name} Due: {task.Due}");
+            }
+            else
+            {
+                Console.WriteLine($"{new string('\t', indentLevel)} {task.Name}");
+            }
+
+            foreach (var subtask in task.Subtasks)
+            {
+                WriteTask(subtask, indentLevel + 1);
+            }
+        }
+
         private static async Task ListAllTasks()
         {
             var tasks = await GetAllTasks().ConfigureAwait(false);
@@ -91,29 +108,17 @@ namespace RtmDotNet.Examples
 
         private static async Task<IList<IRtmTask>> GetAllTasks()
         {
+            var taskRepository = GetTaskRepository();
+            return await taskRepository.GetAllTasksAsync().ConfigureAwait(false);
+        }
+
+        private static ITaskRepository GetTaskRepository()
+        {
             // Load a user from JSON
             var userJson = File.ReadAllText("myRtmUser.json");
             var user = Rtm.GetUserFactory().LoadFromJson(userJson);
 
-            var taskRepository = Rtm.GetTaskRepository(user.Token);
-            return await taskRepository.GetAllTasksAsync().ConfigureAwait(false);
-        }
-
-        private static void WriteTask(IRtmTask task, int indentLevel)
-        {
-            if (task.HasDueTime)
-            {
-                Console.WriteLine($"{new string('\t', indentLevel)} {task.Name} Due: {task.Due}");
-            }
-            else
-            {
-                Console.WriteLine($"{new string('\t', indentLevel)} {task.Name}");
-            }
-
-            foreach (var subtask in task.Subtasks)
-            {
-                WriteTask(subtask, indentLevel + 1);
-            }
+            return Rtm.GetTaskRepository(user.Token);
         }
     }
 }

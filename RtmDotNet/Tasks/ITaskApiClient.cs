@@ -16,13 +16,19 @@
 //     You should have received a copy of the GNU General Public License
 //     along with RtmDotNet.  If not, see <https://www.gnu.org/licenses/>.
 // -----------------------------------------------------------------------
-using System.Collections.Generic;
-using RtmDotNet.Lists;
 
-namespace RtmDotNet.Http.Api.Lists
+using System;
+using System.Threading.Tasks;
+using RtmDotNet.Http.Api.Tasks;
+
+namespace RtmDotNet.Tasks
 {
-    public interface IListConverter
+    public interface ITaskApiClient
     {
-        IList<IRtmList> ConvertToLists(GetListResponseData responseData);
+        Task<GetListResponseData> GetAllTasksAsync(bool includeCompletedTasks = false);
+
+        Task<GetListResponseData> GetAllTasksAsync(DateTime lastSync, bool includeCompletedTasks = false);
+
+        Task<GetListResponseData> GetTasksByListIdAsync(string listId, DateTime? lastSync = null, bool includeCompletedTasks = false);
     }
 }

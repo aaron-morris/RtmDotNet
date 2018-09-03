@@ -74,9 +74,9 @@ namespace RtmDotNet
             var urlBuilderFactory = new ListsUrlBuilderFactory(ApiKey, _signatureGenerator);
             var urlFactory = new ListsUrlFactory(urlBuilderFactory);
             var taskRepository = GetTaskRepository(authToken);
-            var listConverter = new ListConverter(taskRepository);
+            var responseParser = new Http.Api.Lists.ResponseParser(taskRepository);
 
-            return new ListRepository(urlFactory, ApiClient, listConverter, authToken);
+            return new ListRepository(urlFactory, ApiClient, responseParser, authToken);
         }
 
         public static ITaskRepository GetTaskRepository(AuthenticationToken authToken)
@@ -90,9 +90,12 @@ namespace RtmDotNet
 
             var urlBuilderFactory = new TasksUrlBuilderFactory(ApiKey, _signatureGenerator);
             var urlFactory = new TasksUrlFactory(urlBuilderFactory);
-            var taskConverter = new TaskConverter();
-
-            return new TaskRepository(urlFactory, ApiClient, authToken, taskConverter);
+            var taskApiClient = new TaskApiClient(urlFactory, ApiClient, authToken);
+            var responseParser = new Http.Api.Tasks.ResponseParser();
+            var taskTreeBuilder = new TaskTreeBuilder();
+            var taskCache = new InMemoryTaskCache(taskTreeBuilder);
+            var syncTracker = new InMemorySyncTracker();
+            return new TaskRepository(taskApiClient, responseParser, taskCache, syncTracker);
         }
 
         public static IUserFactory GetUserFactory()
