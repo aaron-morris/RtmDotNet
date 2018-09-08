@@ -17,7 +17,6 @@
 //     along with RtmDotNet.  If not, see <https://www.gnu.org/licenses/>.
 // -----------------------------------------------------------------------
 using NUnit.Framework;
-using RtmDotNet.Http;
 using RtmDotNet.Http.Api.Tasks;
 
 namespace RtmDotNet.UnitTests.Http.Api.Tasks
@@ -33,7 +32,7 @@ namespace RtmDotNet.UnitTests.Http.Api.Tasks
             var actual = factory.CreateGetListsUrlBuilder(string.Empty);
 
             // Verify
-            Assert.IsInstanceOf<IUrlBuilder>(actual);
+            Assert.IsInstanceOf<GetListUrlBuilder>(actual);
         }
 
         private TasksUrlBuilderFactory GetItemUnderTest()

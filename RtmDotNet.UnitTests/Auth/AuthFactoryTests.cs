@@ -30,7 +30,7 @@ namespace RtmDotNet.UnitTests.Auth
             var factory = GetItemUnderTest();
             var actual = factory.CreateDesktopAuthenticator();
 
-            Assert.IsInstanceOf<IDesktopAuthenticator>(actual);
+            Assert.IsInstanceOf<DesktopAuthenticator>(actual);
         }
         [Test]
         public void CreateTokenVerifier_CreatesNewTokenVerifier()
@@ -38,7 +38,7 @@ namespace RtmDotNet.UnitTests.Auth
             var factory = GetItemUnderTest();
             var actual = factory.CreateTokenVerifier();
 
-            Assert.IsInstanceOf<ITokenVerifier>(actual);
+            Assert.IsInstanceOf<TokenVerifier>(actual);
         }
 
         private AuthFactory GetItemUnderTest()

@@ -60,7 +60,7 @@ namespace RtmDotNet.UnitTests
         public void GetUserFactory_CreatesUserFactory()
         {
             var actual = Rtm.GetUserFactory();
-            Assert.IsInstanceOf<IUserFactory>(actual);
+            Assert.IsInstanceOf<UserFactory>(actual);
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace RtmDotNet.UnitTests
         {
             Rtm.Init("test", "test");
             var actual = Rtm.GetAuthFactory();
-            Assert.IsInstanceOf<IAuthFactory>(actual);
+            Assert.IsInstanceOf<AuthFactory>(actual);
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace RtmDotNet.UnitTests
         {
             Rtm.Init("test", "test");
             var actual = Rtm.GetListRepository(new AuthenticationToken());
-            Assert.IsInstanceOf<IListRepository>(actual);
+            Assert.IsInstanceOf<ListRepository>(actual);
         }
 
         [Test]
@@ -104,7 +104,7 @@ namespace RtmDotNet.UnitTests
         {
             Rtm.Init("test", "test");
             var actual = Rtm.GetTaskRepository(new AuthenticationToken());
-            Assert.IsInstanceOf<ITaskRepository>(actual);
+            Assert.IsInstanceOf<TaskRepository>(actual);
         }
 
         [Test]
