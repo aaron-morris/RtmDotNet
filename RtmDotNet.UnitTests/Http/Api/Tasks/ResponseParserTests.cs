@@ -18,8 +18,10 @@
 // -----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using NSubstitute;
 using NUnit.Framework;
 using RtmDotNet.Http.Api.Tasks;
+using RtmDotNet.Locations;
 
 namespace RtmDotNet.UnitTests.Http.Api.Tasks
 {
@@ -53,14 +55,19 @@ namespace RtmDotNet.UnitTests.Http.Api.Tasks
         private readonly IList<string> _expectedTags = new List<string> { "tag1", "tag2" };
         private readonly DateTime _expectedNoteCreated = DateTime.Parse("2015-11-01T01:23:24");
         private readonly DateTime _expectedNoteModified = DateTime.Parse("2018-07-01T08:30:24");
+        private readonly IRtmLocation _expectedLocation = Substitute.For<IRtmLocation>();
 
         [Test]
         public void GetTasks_TaskData_InitsFromTaskData()
         {
+            // Setup
             var fakeResponseData = GetFakeResponsesData();
-            var responseParser = GetItemUnderTest();
-            var actual = responseParser.GetTasks(fakeResponseData);
+            var fakeLocationRepository = Substitute.For<ILocationRepository>();
+            fakeLocationRepository.GetLocationByIdAsync(ExpectedLocationId).Returns(_expectedLocation);
 
+            // Execute
+            var responseParser = GetItemUnderTest(fakeLocationRepository);
+            var actual = responseParser.GetTasks(fakeResponseData);
 
             // Verify
             Assert.AreEqual(1, actual.Count);
@@ -68,7 +75,7 @@ namespace RtmDotNet.UnitTests.Http.Api.Tasks
             Assert.AreEqual(ExpectedHasDueTime, actual[0].HasDueTime);
             Assert.AreEqual(ExpectedHasStartTime, actual[0].HasStartTime);
             Assert.AreEqual(ExpectedId, actual[0].Id);
-            Assert.AreEqual(ExpectedLocationId, actual[0].LocationId);
+            Assert.AreEqual(_expectedLocation, actual[0].Location);
             Assert.AreEqual(ExpectedName, actual[0].Name);
             Assert.AreEqual(ExpectedParentTaskId, actual[0].ParentTaskId);
             Assert.AreEqual(ExpectedListId, actual[0].ListId);
@@ -130,6 +137,21 @@ namespace RtmDotNet.UnitTests.Http.Api.Tasks
         }
 
         [Test]
+        public void GetTests_NullLocationId_InitsNullLocationReference()
+        {
+            // Setup
+            var fakeResponseData = GetFakeResponsesData();
+            fakeResponseData.Lists.Lists[0].TaskSeries[0].LocationId = string.Empty;
+
+            // Execute
+            var responseParser = GetItemUnderTest();
+            var actual = responseParser.GetTasks(fakeResponseData);
+
+            // Verify
+            Assert.IsNull(actual[0].Location);
+        }
+
+        [Test]
         public void GetDeletedTasks_TaskData_InitsFromTaskData()
         {
             var fakeResponseData = GetFakeDeletedTasksResponsesData();
@@ -179,7 +201,12 @@ namespace RtmDotNet.UnitTests.Http.Api.Tasks
 
         private IResponseParser GetItemUnderTest()
         {
-            return new ResponseParser();
+            return GetItemUnderTest(Substitute.For<ILocationRepository>());
+        }
+
+        private IResponseParser GetItemUnderTest(ILocationRepository locationRepository)
+        {
+            return new ResponseParser(locationRepository);
         }
 
         private GetListResponseData GetFakeResponsesData()

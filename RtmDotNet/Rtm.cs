@@ -111,7 +111,7 @@ namespace RtmDotNet
             var urlBuilderFactory = new TasksUrlBuilderFactory(ApiKey, _signatureGenerator);
             var urlFactory = new TasksUrlFactory(urlBuilderFactory);
             var taskApiClient = new TaskApiClient(urlFactory, ApiClient, authToken);
-            var responseParser = new Http.Api.Tasks.ResponseParser();
+            var responseParser = new Http.Api.Tasks.ResponseParser(GetLocationRepository(authToken));
             var taskTreeBuilder = new TaskTreeBuilder();
             var taskCache = new InMemoryTaskCache(taskTreeBuilder);
             var syncTracker = new InMemorySyncTracker();

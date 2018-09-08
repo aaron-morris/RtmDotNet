@@ -18,6 +18,7 @@
 // -----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using RtmDotNet.Locations;
 
 namespace RtmDotNet.Tasks
 {
@@ -36,7 +37,7 @@ namespace RtmDotNet.Tasks
         bool HasStartTime { get; set; }
         string Source { get; set; }
         string Url { get; set; }
-        string LocationId { get; set; }
+        IRtmLocation Location { get; set; }
         string ParentTaskId { get; set; }
         string SeriesId { get; set; }
         string ListId { get; set; }

@@ -18,6 +18,7 @@
 // -----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using RtmDotNet.Locations;
 
 namespace RtmDotNet.Tasks
 {
@@ -58,10 +59,12 @@ namespace RtmDotNet.Tasks
 
         public string Url { get; set; }
 
-        public string LocationId { get; set; }
+        public IRtmLocation Location { get; set; }
 
         public string ParentTaskId { get; set; }
+
         public string SeriesId { get; set; }
+
         public string ListId { get; set; }
 
         public IList<string> Tags { get; set; }

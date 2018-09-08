@@ -17,12 +17,20 @@
 //     along with RtmDotNet.  If not, see <https://www.gnu.org/licenses/>.
 // -----------------------------------------------------------------------
 using System.Collections.Generic;
+using RtmDotNet.Locations;
 using RtmDotNet.Tasks;
 
 namespace RtmDotNet.Http.Api.Tasks
 {
     public class ResponseParser : IResponseParser
     {
+        private readonly ILocationRepository _locationRepository;
+
+        public ResponseParser(ILocationRepository locationRepository)
+        {
+            _locationRepository = locationRepository;
+        }
+
         public IList<IRtmTask> GetTasks(GetListResponseData responseData)
         {
             var tasks = new List<IRtmTask>();
@@ -79,7 +87,7 @@ namespace RtmDotNet.Http.Api.Tasks
                     Estimate = taskInstance.Estimate,
                     HasDueTime = taskInstance.HasDueTime,
                     HasStartTime = taskInstance.HasStartTime,
-                    LocationId = taskSeriesData.LocationId,
+                    Location = GetLocation(taskSeriesData.LocationId),
                     Name = taskSeriesData.Name,
                     Modified = taskSeriesData.Modified,
                     ParentTaskId = taskSeriesData.ParentTaskId,
@@ -111,6 +119,18 @@ namespace RtmDotNet.Http.Api.Tasks
             }
 
             return tasks;
+        }
+
+        private IRtmLocation GetLocation(string locationId)
+        {
+            if (string.IsNullOrEmpty(locationId))
+            {
+                return null;
+            }
+
+            var getLocationTask = _locationRepository.GetLocationByIdAsync(locationId);
+            var location = getLocationTask.Result;
+            return location;
         }
     }
 }
