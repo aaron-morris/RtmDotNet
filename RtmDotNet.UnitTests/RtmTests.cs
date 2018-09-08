@@ -20,6 +20,7 @@ using System;
 using NUnit.Framework;
 using RtmDotNet.Auth;
 using RtmDotNet.Lists;
+using RtmDotNet.Locations;
 using RtmDotNet.Tasks;
 using RtmDotNet.Users;
 
@@ -117,6 +118,27 @@ namespace RtmDotNet.UnitTests
         public void GetTaskRepostiory_ApiNotInitialized_ThrowsInvalidOperationException()
         {
             Assert.Throws<InvalidOperationException>(() => Rtm.GetTaskRepository(new AuthenticationToken()));
+        }
+
+        [Test]
+        public void GetLocationRepository_ApiIsInitialized_CreatesListRepository()
+        {
+            Rtm.Init("test", "test");
+            var actual = Rtm.GetLocationRepository(new AuthenticationToken());
+            Assert.IsInstanceOf<LocationRepository>(actual);
+        }
+
+        [Test]
+        public void GetLocationRepository_NullToken_ThrowsArgumentNullException()
+        {
+            Rtm.Init("test", "test");
+            Assert.Throws<ArgumentNullException>(() => Rtm.GetLocationRepository(null));
+        }
+
+        [Test]
+        public void GetLocationRepostiory_ApiNotInitialized_ThrowsInvalidOperationException()
+        {
+            Assert.Throws<InvalidOperationException>(() => Rtm.GetLocationRepository(new AuthenticationToken()));
         }
     }
 }

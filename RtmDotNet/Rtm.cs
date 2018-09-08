@@ -21,8 +21,10 @@ using RtmDotNet.Auth;
 using RtmDotNet.Http;
 using RtmDotNet.Http.Api;
 using RtmDotNet.Http.Api.Lists;
+using RtmDotNet.Http.Api.Locations;
 using RtmDotNet.Http.Api.Tasks;
 using RtmDotNet.Lists;
+using RtmDotNet.Locations;
 using RtmDotNet.Tasks;
 using RtmDotNet.Users;
 
@@ -77,6 +79,24 @@ namespace RtmDotNet
             var responseParser = new Http.Api.Lists.ResponseParser(taskRepository);
 
             return new ListRepository(urlFactory, ApiClient, responseParser, authToken);
+        }
+
+        public static ILocationRepository GetLocationRepository(AuthenticationToken authToken)
+        {
+            if (authToken == null)
+            {
+                throw new ArgumentNullException(nameof(authToken));
+            }
+
+            EnforceInitialization();
+
+            var urlBuilderFactory = new LocationsUrlBuilderFactory(ApiKey, _signatureGenerator);
+            var urlFactory = new LocationsUrlFactory(urlBuilderFactory);
+            var responseParser = new Http.Api.Locations.ResponseParser();
+            var locationApiClient = new LocationApiClient(urlFactory, ApiClient, authToken, responseParser);
+            var locationCache = new InMemoryLocationCache();
+
+            return new LocationRepository(locationApiClient, locationCache);
         }
 
         public static ITaskRepository GetTaskRepository(AuthenticationToken authToken)
